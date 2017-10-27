@@ -492,10 +492,16 @@ public class GameScreen extends javax.swing.JFrame {
                     this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgCounterclock.jpg")));
                 }
             }
-            if(current.getValue().equals("skip")){
-                this.controller.rotatePlayers();
-                this.controller.rotatePlayers();
+            else if(current.getValue().equals("skip")){
+                this.nextPlayer();
+                this.nextPlayer();
             }
+            else if(current.getValue().equals("d2")){
+                this.nextPlayer();
+                for(int i=0;i<2;i++)
+                    this.drawFromDeck();
+            }
+            
         }
         else if(current.getColor().equals("wild")){
             this.placeCard(current);
@@ -506,6 +512,11 @@ public class GameScreen extends javax.swing.JFrame {
             p3hand.setVisible(false);
             p4hand.setVisible(false);
             colorSelect.setVisible(true);
+            if(current.getValue().equals("d4")){
+                this.nextPlayer();
+                for(int i=0;i<4;i++)
+                    this.drawFromDeck();
+            }
         }
         
     }
@@ -588,16 +599,9 @@ public class GameScreen extends javax.swing.JFrame {
         }
 
     }
-    private void showAndHide(){
-        if(p1hand.isVisible()){
-            p1hand.setVisible(false);
-        }
-        else if(!((Player)(this.controller.getPlayers().get(0))).isNPC()){
-            p1hand.setVisible(true);
-        }
-    }
+
     private void showhideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showhideButtonActionPerformed
-        showAndHide();
+        this.showOrHide();
     }//GEN-LAST:event_showhideButtonActionPerformed
 
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
@@ -611,7 +615,7 @@ public class GameScreen extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_mmButtonActionPerformed
 
-    private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
+    private void drawFromDeck(){
         Player current = this.controller.getPlayers().get(0);
         Deck d = this.controller.getDeck();
         Card c = d.drawCard();
@@ -620,6 +624,9 @@ public class GameScreen extends javax.swing.JFrame {
             deckButton.setVisible(false);
         }
         this.updatePlayerUI();
+    }
+    private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
+        drawFromDeck();
     }//GEN-LAST:event_deckButtonActionPerformed
 
     private void turnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnButtonActionPerformed
@@ -628,7 +635,7 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_turnButtonActionPerformed
 
     private void showhideButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showhideButton1ActionPerformed
-        showAndHide();
+        p1hand.setVisible(true);
         showhideButton1.setVisible(false);
         showhideButton.setEnabled(true);
     }//GEN-LAST:event_showhideButton1ActionPerformed
@@ -688,7 +695,6 @@ public class GameScreen extends javax.swing.JFrame {
         this.resumeGame();
         this.colorSelect.setVisible(false);
         this.controller.getTopCard().get(this.controller.getTopCard().size()-1).setColor(color);
-        p1hand.setVisible(true);
         this.refreshCardLabel();
     }
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
