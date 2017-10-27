@@ -542,9 +542,11 @@ public class GameScreen extends javax.swing.JFrame {
     private void updatePlayerUI(){
         if(!this.controller.getActivePlayer().isNPC()){
             turnButton.setEnabled(true);
+            deckButton.setEnabled(true);  
         }
         else{
             //turnButton.setEnabled(false);
+            //deckButton.setEnabled(false);  
         }
         JLabel[] names = new JLabel[]{p1name,p2name,p3name,p4name}; //hand and names must be same size
         JPanel[] containers = new JPanel[]{p1handcontainer,p2handcontainer,p3handcontainer,p4handcontainer};
