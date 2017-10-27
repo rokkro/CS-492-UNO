@@ -492,6 +492,10 @@ public class GameScreen extends javax.swing.JFrame {
                     this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgCounterclock.jpg")));
                 }
             }
+            if(current.getValue().equals("skip")){
+                this.controller.rotatePlayers();
+                this.controller.rotatePlayers();
+            }
         }
         else if(current.getColor().equals("wild")){
             this.placeCard(current);
