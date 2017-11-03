@@ -320,6 +320,7 @@ public class GameScreen extends javax.swing.JFrame {
         showhideButton.setToolTipText("");
         showhideButton.setBorderPainted(false);
         showhideButton.setContentAreaFilled(false);
+        showhideButton.setEnabled(false);
         showhideButton.setFocusable(false);
         showhideButton.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/showhidePush.png"))); // NOI18N
         showhideButton.addActionListener(new java.awt.event.ActionListener() {
@@ -456,6 +457,7 @@ public class GameScreen extends javax.swing.JFrame {
         unoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/uno.png"))); // NOI18N
         unoButton.setBorderPainted(false);
         unoButton.setContentAreaFilled(false);
+        unoButton.setEnabled(false);
         unoButton.setFocusable(false);
         unoButton.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/unopush.png"))); // NOI18N
         unoButton.addActionListener(new java.awt.event.ActionListener() {
@@ -547,6 +549,12 @@ public class GameScreen extends javax.swing.JFrame {
         else{
             //turnButton.setEnabled(false);
             //deckButton.setEnabled(false);  
+        }
+        if(this.controller.getActivePlayer().getHand().size()==1){
+            unoButton.setEnabled(true);
+        }
+        else{
+            unoButton.setEnabled(false);
         }
         JLabel[] names = new JLabel[]{p1name,p2name,p3name,p4name}; //hand and names must be same size
         JPanel[] containers = new JPanel[]{p1handcontainer,p2handcontainer,p3handcontainer,p4handcontainer};
@@ -673,6 +681,10 @@ public class GameScreen extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_quitButtonActionPerformed
     private void resumeGame(){
+        if(!this.controller.getActivePlayer().isNPC()){
+            showhideButton1.setVisible(true);
+            showhideButton.setEnabled(false);
+        }
         bgCover.setVisible(false);
         p2hand.setVisible(true);
         p3hand.setVisible(true);
