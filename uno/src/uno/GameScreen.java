@@ -615,7 +615,11 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_showhideButtonActionPerformed
 
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
-        // TODO add your handling code here:
+        if(this.controller.getActivePlayer().isNPC()){
+            this.controller.getActivePlayer().addCard(this.controller.getDeck().drawCard());
+            this.controller.getActivePlayer().addCard(this.controller.getDeck().drawCard());
+        }
+        this.nextPlayer();
     }//GEN-LAST:event_unoButtonActionPerformed
 
     private void mmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mmButtonActionPerformed
@@ -640,7 +644,10 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_deckButtonActionPerformed
 
     private void turnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnButtonActionPerformed
-        // TODO add your handling code here:
+        if(this.controller.getActivePlayer().getHand().size() == 1 &&
+                !this.controller.getActivePlayer().isNPC()){
+            this.controller.getActivePlayer().addCard(this.controller.getDeck().drawCard());
+        }
         this.nextPlayer();
     }//GEN-LAST:event_turnButtonActionPerformed
 
