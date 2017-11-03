@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -644,8 +645,14 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_deckButtonActionPerformed
 
     private void turnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnButtonActionPerformed
+        List<Player> npcs = this.controller.getActiveNPCs();
         if(this.controller.getActivePlayer().getHand().size() == 1 &&
-                !this.controller.getActivePlayer().isNPC()){
+                !this.controller.getActivePlayer().isNPC() &&
+                npcs.size() >=1){
+            //Random ran = new Random();
+            //int x = ran.nextInt(0) + npcs.size();
+            //npcs.get(x);
+            this.controller.getActivePlayer().addCard(this.controller.getDeck().drawCard());
             this.controller.getActivePlayer().addCard(this.controller.getDeck().drawCard());
         }
         this.nextPlayer();
