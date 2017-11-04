@@ -8,14 +8,21 @@ public class Player {
     private String name;
     private List<Card> hand = new ArrayList();    
     private boolean NPC;
-    
+    private boolean Played;
     public Player(String name){
         this.name = name;
         this.NPC = false;
+        this.Played = false;
     }
     public Player(String name,boolean NPC){
         this.name = name;
         this.NPC = NPC;
+    }
+    public boolean hasPlayed(){
+        return this.Played;
+    }
+    public void setPlayed(boolean state){
+        this.Played = state;
     }
     public boolean isNPC(){
         return this.NPC;
