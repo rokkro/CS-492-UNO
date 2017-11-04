@@ -42,7 +42,7 @@ public class Deck {
         for(String color: colors){
             for(String type:color_cards){
                 boolean isSpecial = false;
-                if(type == "p2" || type == "skip" || type == "reverse"){
+                if(type == "d2" || type == "skip" || type == "reverse"){
                     isSpecial = true;
                 }
                 this.card_deck.add(new Card(type,color,isSpecial));
