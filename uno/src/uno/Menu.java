@@ -381,6 +381,7 @@ public class Menu extends javax.swing.JFrame {
                 return;
             }
         }
+        this.controller.setDifficulty(diffCombo.getSelectedIndex());
         this.controller.createPlayers(pNames,NPC);
         this.controller.initializeGamePlay();
         gs = new GameScreen(this.controller);

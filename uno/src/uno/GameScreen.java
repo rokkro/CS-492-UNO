@@ -102,7 +102,7 @@ public class GameScreen extends javax.swing.JFrame {
         setForeground(java.awt.Color.red);
         setMinimumSize(new java.awt.Dimension(900, 614));
         setName("Uno-Game"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(905, 675));
+        setPreferredSize(new java.awt.Dimension(905, 656));
         setResizable(false);
         setSize(new java.awt.Dimension(900, 610));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -298,7 +298,7 @@ public class GameScreen extends javax.swing.JFrame {
         bgCover.setMinimumSize(new java.awt.Dimension(900, 636));
         bgCover.setOpaque(true);
         bgCover.setPreferredSize(new java.awt.Dimension(900, 636));
-        getContentPane().add(bgCover, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -20, -1, -1));
+        getContentPane().add(bgCover, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, -1, -1));
 
         currentCard.setPreferredSize(new java.awt.Dimension(97, 136));
         currentCard.setLayout(new javax.swing.BoxLayout(currentCard, javax.swing.BoxLayout.LINE_AXIS));
@@ -437,7 +437,7 @@ public class GameScreen extends javax.swing.JFrame {
                 pauseButtonActionPerformed(evt);
             }
         });
-        getContentPane().add(pauseButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 560, 120, 40));
+        getContentPane().add(pauseButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 550, 120, 40));
 
         turnButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/turn.png"))); // NOI18N
         turnButton.setAlignmentX(0.5F);
@@ -453,7 +453,7 @@ public class GameScreen extends javax.swing.JFrame {
                 turnButtonActionPerformed(evt);
             }
         });
-        getContentPane().add(turnButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 560, 120, -1));
+        getContentPane().add(turnButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 550, 120, -1));
 
         unoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/uno.png"))); // NOI18N
         unoButton.setBorderPainted(false);
@@ -500,6 +500,7 @@ public class GameScreen extends javax.swing.JFrame {
         }
         Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
         if(current.getColor().equals(top.getColor()) || current.getValue() == top.getValue()){
+            deckButton.setEnabled(false);
             this.placeCard(current);
             hand.remove(current);
             if(current.getValue().equals("reverse")){
@@ -523,6 +524,7 @@ public class GameScreen extends javax.swing.JFrame {
             this.controller.getActivePlayer().setPlayed(true);
         }
         else if(current.getColor().equals("wild")){
+            deckButton.setEnabled(false);
             this.placeCard(current);
             hand.remove(current);
             bgCover.setVisible(true);
@@ -560,11 +562,9 @@ public class GameScreen extends javax.swing.JFrame {
                 turnButton.setEnabled(true);
             else
                 turnButton.setEnabled(false);
-            deckButton.setEnabled(true);  
         }
         else{
             turnButton.setEnabled(true);
-            deckButton.setEnabled(false);  
         }
         if(this.controller.getActivePlayer().getHand().size()==1){
             unoButton.setEnabled(true);
@@ -617,11 +617,14 @@ public class GameScreen extends javax.swing.JFrame {
             p1hand.setVisible(false);
             showhideButton.setEnabled(false);
             showhideButton1.setVisible(false);
+             deckButton.setEnabled(false);
         }
         else{
             p1hand.setVisible(false);
             showhideButton.setEnabled(false);
             showhideButton1.setVisible(true);
+            deckButton.setEnabled(true);
+
         }
 
     }
@@ -656,9 +659,10 @@ public class GameScreen extends javax.swing.JFrame {
             if(d.deckSize() == 0){
                 deckButton.setVisible(false);
             }
-            //if(count == 1 && this.isPlayableCard(c)){
-            //    this.controller.getActivePlayer().setPlayed(false);
-            //}
+            if(count == 1 && this.isPlayableCard(c)){
+                this.controller.getActivePlayer().setPlayed(false);
+            }
+            this.turnButton.setEnabled(true);
             this.updatePlayerUI();
         }
 
@@ -667,6 +671,7 @@ public class GameScreen extends javax.swing.JFrame {
         if(this.controller.getActivePlayer().hasPlayed())
             return;
         this.controller.getActivePlayer().setPlayed(true);
+        deckButton.setEnabled(false);
         drawFromDeck(1);
     }//GEN-LAST:event_deckButtonActionPerformed
 
@@ -760,6 +765,7 @@ public class GameScreen extends javax.swing.JFrame {
         p1hand.setVisible(true);
         this.controller.getActivePlayer().setPlayed(false);
         this.colorSelect.setVisible(false);
+        deckButton.setEnabled(true);
         Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
         System.out.println(top);
         this.controller.getActivePlayer().getHand().add(top);

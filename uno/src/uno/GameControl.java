@@ -10,6 +10,7 @@ public class GameControl {
     private boolean paused = false;
     private List<Card> pile = new ArrayList();
     private boolean clockwise = true;
+    private int difficulty;
     
     public static String getNPCName(){ //pass in current names and compare
         String[] s = {"Dolores","Arando","Bram","Cale","Dalkon","Daylen","Dodd","Dungarth","Dyrk","Eandro","Falken","Feck","Fenton","Gryphero","Hagar","Jeras","Krynt","Lavant","Leyten","Madian","Malfier","Markus","Meklan","Namen","Navaren","Nerle","Nilus","Ningyan","Norris","Quentin","Semil","Sevenson","Steveren","Talfen","Tamond","Taran","Tavon","Tegan","Vanan","Vincent"};
@@ -29,6 +30,9 @@ public class GameControl {
             this.clockwise = false;
         else
             this.clockwise = true;
+    }
+    public void setDifficulty(int diff){
+        this.difficulty = diff; //0 = easy, 3 = hardest
     }
     public boolean isClockwise(){
         return this.clockwise;
@@ -78,10 +82,6 @@ public class GameControl {
             this.players.add(new Player(pnames[i],NPC[i]));
         }
         this.activePlayer = this.players.get(0);
-    }
-    public static void main(String[] args) { 
-        Menu menu = new Menu();
-        menu.setVisible(true);
     }
     public List<Player> getActiveNPCs(){
         List<Player> lst = new ArrayList();
