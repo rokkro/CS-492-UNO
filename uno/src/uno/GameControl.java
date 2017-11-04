@@ -8,7 +8,7 @@ public class GameControl {
     private List<Player> players;
     private Player activePlayer;
     private boolean paused = false;
-    private List<Card> topCard = new ArrayList();
+    private List<Card> pile = new ArrayList();
     private boolean clockwise = true;
     
     public static String getNPCName(){ //pass in current names and compare
@@ -33,11 +33,11 @@ public class GameControl {
     public boolean isClockwise(){
         return this.clockwise;
     }
-    public List<Card> getTopCard(){
-        return this.topCard;
+    public List<Card> getPile(){
+        return this.pile;
     }
-    public void setTopCard(Card c){
-        this.topCard.add(c);
+    public void addToPile(Card c){
+        this.pile.add(c);
     }
     public Deck getDeck(){
         return this.deck;
@@ -47,6 +47,7 @@ public class GameControl {
     }
     public void rotatePlayers(){
         while(this.paused){}
+        this.getActivePlayer().setPlayed(false);
         for(int i=0;i<this.players.size();i++){
             if(this.players.get(i).getHand().size()==0){
                 this.players.remove(i);
@@ -81,5 +82,14 @@ public class GameControl {
     public static void main(String[] args) { 
         Menu menu = new Menu();
         menu.setVisible(true);
+    }
+    public List<Player> getActiveNPCs(){
+        List<Player> lst = new ArrayList();
+        for(int i=0;i<this.players.size();i++){
+            if(this.players.get(i).isNPC() && this.players.get(i).getHand().size()>=1){
+                lst.add(this.players.get(i));
+            }
+        }
+        return lst;
     }
 }
