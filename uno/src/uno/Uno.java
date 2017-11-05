@@ -1,9 +1,8 @@
 package uno;
-import javax.swing.JFrame;
-
+//MAIN CLASS + METHOD
 public class Uno {
-    private static Menu menu = new Menu();
-    public static void main(String[] args) { 
+    public static void main(String[] args) {
+        Menu menu = new Menu();
         menu.setVisible(true);
     }
 }
