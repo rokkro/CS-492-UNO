@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private String name;
-    private List<Card> hand = new ArrayList();    
-    private boolean NPC;
-    private boolean Played;
+    private String name; //Player's name
+    private List<Card> hand = new ArrayList(); //Player's hand   
+    private boolean NPC; //If they are an NPC or actual player
+    private boolean Played; //If they have played a card
+    //Constructors
     public Player(String name){
         this.name = name;
         this.NPC = false;
@@ -17,6 +18,7 @@ public class Player {
     public Player(String name,boolean NPC){
         this.name = name;
         this.NPC = NPC;
+        this.Played = false;
     }
     public boolean hasPlayed(){
         return this.Played;
@@ -28,9 +30,11 @@ public class Player {
         return this.NPC;
     }
     public void addCard(Card c){
+        // Add a card to the player's hand ArrayList
         this.hand.add(c);
     }
     public void removeCard(int index){
+        // Remove a card from the hand at an index
         this.hand.remove(index);
     }
     public String getName(){
@@ -40,6 +44,6 @@ public class Player {
         return this.hand;
     }
     public String toString(){
-        return this.name;
+        return this.name + " NPC: " + this.NPC + " Has Played: " + this.Played;
     }
 }
