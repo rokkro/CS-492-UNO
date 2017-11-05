@@ -14,13 +14,11 @@ import java.util.List;
 public class Menu extends javax.swing.JFrame {
     private GameScreen gs;
     private GameControl controller;
-    /**
-     * Creates new form GUI
-     */
+
     public Menu(){
         initComponents();
         this.controller = new GameControl();
-        bgBlurred.setVisible(false);
+        bgBlurred.setVisible(false); // Hide decorative blurry overlay
     }
     public Menu(GameControl c){
         initComponents();
@@ -302,26 +300,26 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        //Play
+        //Play button
         bgBlurred.setVisible(true);
         gameSetup.setVisible(true);
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
-        //Help
+        //Help button
         bgBlurred.setVisible(true);
         helpScreen.setVisible(true);
     }//GEN-LAST:event_helpButtonActionPerformed
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
-        //Quit
+        //Quit button
         System.exit(0);
     }//GEN-LAST:event_quitButtonActionPerformed
 
     private void diffComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diffComboActionPerformed
-        // TODO add your handling code here:
+        // Dont need anything here
     }//GEN-LAST:event_diffComboActionPerformed
-    private String getNames(){
+    private String getNames(){ 
             String testName = this.controller.getNPCName();
             String[] arr = {player1Name.getText(),player2Name.getText(),player3Name.getText(),player4Name.getText()};
             for(int i=0;i<arr.length;i++){
@@ -335,7 +333,7 @@ public class Menu extends javax.swing.JFrame {
     }
     private void numplayerComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numplayerComboActionPerformed
         switch(Integer.parseInt(String.valueOf(numplayerCombo.getSelectedItem()))){
-            case 1:
+            case 1: // For disabled name boxes with the number of players selected
                 player1Name.setEnabled(true);
                 player2Name.setText(getNames());
                 player3Name.setText(getNames());
@@ -372,26 +370,32 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_numplayerComboActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        // TODO add your handling code here:
+        // Preparing for the actual game to load after entering all of the player's names and clicking START
         String[] pNames = {player1Name.getText(),player2Name.getText(),player3Name.getText(),player4Name.getText()};
+        // NPC status is assigned to disabled name boxes
         boolean[] NPC = {!player1Name.isEnabled(),!player2Name.isEnabled(),!player3Name.isEnabled(),!player4Name.isEnabled()};
+        // Display a warning if any blank boxes.
         for(int i=0;i<Integer.parseInt(String.valueOf(numplayerCombo.getSelectedItem()));i++){
             if(pNames[i].replaceAll("\\s","").equals("")){
                 warningLabel.setVisible(true);
                 return;
             }
         }
+        // Pass the difficulty to the controller.
         this.controller.setDifficulty(diffCombo.getSelectedIndex());
+        // Create the player objects
         this.controller.createPlayers(pNames,NPC);
+        // Do initial setup operations
         this.controller.initializeGamePlay();
+        // Create a gamescreen
         gs = new GameScreen(this.controller);
+        // Display it
         gs.setVisible(true);
         dispose();
         
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void player2NameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_player2NameActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_player2NameActionPerformed
 
     private void bgBlurredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bgBlurredActionPerformed
