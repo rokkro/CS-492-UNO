@@ -18,9 +18,9 @@ public class Deck {
     private String[] colors = new String[]{"red", "yellow", "green", "blue"};
     private String[] color_cards = new String[]{"0","1","2","3","4","5","6","7","8","9","skip","reverse","d2"};
     private String[] special_cards = new String[]{"d4","cc"};
-    //25 of each color
+    // 25 of each color
     //  2 of each rank except zero
-    //4 wild and 4 wild draw four
+    // 4 wild and 4 wild draw four
 
     public Deck(){
         makeDeck();

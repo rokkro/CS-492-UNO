@@ -1,12 +1,9 @@
 package uno;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-
 public class Card {
     private String value,color;
     private boolean special;
-    private Object button;
+    private Object button; // Associate Button to card, use generic to avoid import necessity
     
     //Initializes Cards
     public Card(String value, String color, boolean special){
