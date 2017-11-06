@@ -1,5 +1,4 @@
 package uno;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +11,13 @@ public class GameControl {
     private boolean clockwise = true;
     private int difficulty;
     
-    public static String getNPCName(){ //pass in current names and compare
+    public static String getNPCName(){ // Generate a random name
         String[] s = {"Dolores","Arando","Bram","Cale","Dalkon","Daylen","Dodd","Dungarth","Dyrk","Eandro","Falken","Feck","Fenton","Gryphero","Hagar","Jeras","Krynt","Lavant","Leyten","Madian","Malfier","Markus","Meklan","Namen","Navaren","Nerle","Nilus","Ningyan","Norris","Quentin","Semil","Sevenson","Steveren","Talfen","Tamond","Taran","Tavon","Tegan","Vanan","Vincent"};
         String result = s[(int)(Math.random() * s.length)];
         return result;
     }
     public void initializeGamePlay(){
+        // Create a deck, and give all players 7 cards
         this.deck = new Deck();
         for(Player p:this.players){
             for(int i=0;i<7;i++){
@@ -26,6 +26,7 @@ public class GameControl {
         }
     }
     public void reverse(){
+        // Reverse game rotation flag
         if(this.clockwise)
             this.clockwise = false;
         else
@@ -50,7 +51,8 @@ public class GameControl {
         return this.activePlayer;
     }
     public void rotatePlayers(){
-        while(this.paused){}
+        // Rotate to the next player. Should be called from GameScreen's nextPlayer()
+        while(this.paused){} // Pause game while this.paused == true
         this.getActivePlayer().setPlayed(false);
         for(int i=0;i<this.players.size();i++){
             if(this.players.get(i).getHand().size()==0){
@@ -77,6 +79,7 @@ public class GameControl {
         return this.players;
     }
     public void createPlayers(String[] pnames, boolean[] NPC){
+        // Create the players
         this.players = new ArrayList();
         for(int i=0;i<pnames.length;i++){
             this.players.add(new Player(pnames[i],NPC[i]));
@@ -84,6 +87,7 @@ public class GameControl {
         this.activePlayer = this.players.get(0);
     }
     public List<Player> getActiveNPCs(){
+        // Get list of players who are NPCs (not used for anything right now)
         List<Player> lst = new ArrayList();
         for(int i=0;i<this.players.size();i++){
             if(this.players.get(i).isNPC() && this.players.get(i).getHand().size()>=1){
