@@ -97,8 +97,9 @@ public class GameScreen extends javax.swing.JFrame {
         setForeground(java.awt.Color.red);
         setMinimumSize(new java.awt.Dimension(900, 614));
         setName("Uno-Game"); // NOI18N
+        setPreferredSize(new java.awt.Dimension(905, 656));
         setResizable(false);
-        setSize(new java.awt.Dimension(900, 610));
+        setSize(getPreferredSize());
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         colorSelect.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
