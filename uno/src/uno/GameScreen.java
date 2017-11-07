@@ -95,7 +95,7 @@ public class GameScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
         setForeground(java.awt.Color.red);
-        setMinimumSize(new java.awt.Dimension(900, 614));
+        setMinimumSize(getPreferredSize());
         setName("Uno-Game"); // NOI18N
         setPreferredSize(new java.awt.Dimension(905, 656));
         setResizable(false);

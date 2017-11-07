@@ -70,7 +70,6 @@ public class Menu extends javax.swing.JFrame {
         setAlwaysOnTop(true);
         setBackground(new java.awt.Color(68, 255, 73));
         setForeground(java.awt.Color.white);
-        setMaximumSize(new java.awt.Dimension(774, 547));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -140,7 +139,7 @@ public class Menu extends javax.swing.JFrame {
         player4Label.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         gameSetup.getContentPane().add(player4Label, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 220, 110, 30));
 
-        diffCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Easy", "Normal", "Hard", "ULTRA CHAOS MODE" }));
+        diffCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Normal", "Hard" }));
         diffCombo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         diffCombo.setFocusable(false);
         diffCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -148,13 +147,13 @@ public class Menu extends javax.swing.JFrame {
                 diffComboActionPerformed(evt);
             }
         });
-        gameSetup.getContentPane().add(diffCombo, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, -1, -1));
+        gameSetup.getContentPane().add(diffCombo, new org.netbeans.lib.awtextra.AbsoluteConstraints(258, 60, 120, -1));
 
         diffLabel.setFont(diffLabel.getFont().deriveFont(diffLabel.getFont().getStyle() | java.awt.Font.BOLD));
         diffLabel.setForeground(new java.awt.Color(255, 217, 0));
         diffLabel.setText("Difficulty:");
         diffLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        gameSetup.getContentPane().add(diffLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 50, 70, 30));
+        gameSetup.getContentPane().add(diffLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 50, 70, 30));
 
         numplayerCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
         numplayerCombo.setFocusable(false);

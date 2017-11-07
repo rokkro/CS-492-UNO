@@ -229,11 +229,9 @@
         <Component class="javax.swing.JComboBox" name="diffCombo">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Easy"/>
-                <StringItem index="1" value="Normal"/>
-                <StringItem index="2" value="Hard"/>
-                <StringItem index="3" value="ULTRA CHAOS MODE"/>
+              <StringArray count="2">
+                <StringItem index="0" value="Normal"/>
+                <StringItem index="1" value="Hard"/>
               </StringArray>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -251,7 +249,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="250" y="60" width="-1" height="-1"/>
+              <AbsoluteConstraints x="258" y="60" width="120" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -270,7 +268,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="170" y="50" width="70" height="30"/>
+              <AbsoluteConstraints x="180" y="50" width="70" height="30"/>
             </Constraint>
           </Constraints>
         </Component>
