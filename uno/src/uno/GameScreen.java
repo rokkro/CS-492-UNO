@@ -639,10 +639,11 @@ public class GameScreen extends javax.swing.JFrame {
     private void showOrHide(){
         // Controlling when active hand is visible/hidden + show/hide buttons
         if(((Player)(this.controller.getPlayers().get(0))).isNPC()){
-            p1hand.setVisible(false);
-            showhideButton.setEnabled(false);
-            showButton.setVisible(false);
-             deckButton.setEnabled(false);
+            //TEMPORARY SETTINGS FOR TESTING PURPOSES!!!!!!!!!
+            //p1hand.setVisible(false); 
+            //showhideButton.setEnabled(false);
+            //showButton.setVisible(false);
+            deckButton.setEnabled(true);
         }
         else{
             p1hand.setVisible(false);
