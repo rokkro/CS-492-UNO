@@ -18,7 +18,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
+/*
+isPlayableCard(Card current) - returns bool. Whether or not you can play a card
+handleCard(Card current, List<Card> hand) Deals with placing card onto pile, checking conditions, and handling various UI elements + state changes from special cards
+refreshCardLabel() Updates label above the pile.
+PlaceCard(Card current) Deals with UI updating when placing a card. Reccomend you call handleCard() instead to place cards!
+nextPlayer() - Rotates to next player
+updatePlayerUI() - Updates hands UI, creates card buttons, other UI elements
+showOrHide() - Determines when to show 'SHOW' button, and when to show 'HIDE' button
+drawFromDeck(int n) - Draws n number of cards and adds them to hand, removes them from the deck
+displayRanking() - Deals with UI of pause screen rankings
+resumeGame() - unfreezes rotations when coming from pause screen/Wild card screen
+colorButtonAction(string color) - Makes the current wild card set to decided color
+XXXButtonActionPerformed() - buttons that do stuff when clicked
+*/
 
 public class GameScreen extends javax.swing.JFrame {
 

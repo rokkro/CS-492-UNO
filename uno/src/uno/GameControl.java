@@ -33,7 +33,7 @@ public class GameControl {
             this.clockwise = true;
     }
     public void setDifficulty(int diff){
-        this.difficulty = diff; //0 = easy, 3 = hardest
+        this.difficulty = diff; //0 = easy, 1 = hardest
     }
     public boolean isClockwise(){
         return this.clockwise;
