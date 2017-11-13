@@ -572,6 +572,12 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.rotatePlayers();
         this.updatePlayerUI();
         this.showOrHide();
+        if(this.controller.getActivePlayer().isNPC()){
+            this.npcAction();
+        }
+    }
+    private void npcAction(){
+        
     }
     private void updatePlayerUI(){
         // For updating various UI elements
@@ -643,7 +649,7 @@ public class GameScreen extends javax.swing.JFrame {
             //p1hand.setVisible(false); 
             //showhideButton.setEnabled(false);
             //showButton.setVisible(false);
-            deckButton.setEnabled(true);
+            //deckButton.setEnabled(false);
         }
         else{
             p1hand.setVisible(false);
