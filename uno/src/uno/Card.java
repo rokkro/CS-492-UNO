@@ -30,6 +30,9 @@ public class Card {
         return this.button;
     }
     public String getImage(){
+        if(this.value.equals("cc") || this.value.equals("d4")){
+            return "/resources/cards/" + "wild" + "_" + this.value + ".png";
+        }
         return "/resources/cards/" + this.color + "_" + this.value + ".png";
     }
     public String toString(){

@@ -526,17 +526,18 @@ public class GameScreen extends javax.swing.JFrame {
                 }
             }
             else if(current.getValue().equals("skip")){
-                this.nextPlayer();
+                this.switchToNext();
                 this.nextPlayer();
             }
             else if(current.getValue().equals("d2")){ // Draw two
-                this.nextPlayer();
+                this.switchToNext();
                 this.drawFromDeck(2);
+                this.controller.getActivePlayer().setPlayed(true);
             }
             // Player has played card, so switch flag
             this.controller.getActivePlayer().setPlayed(true);
         }
-        else if(current.getColor().equals("wild")){
+        else if(current.getColor().equals("wild") && !this.controller.getActivePlayer().isNPC()){
             deckButton.setEnabled(false);
             this.placeCard(current);
             hand.remove(current);
@@ -550,6 +551,52 @@ public class GameScreen extends javax.swing.JFrame {
             colorSelect.setVisible(true);
             this.controller.getActivePlayer().setPlayed(true);
         }
+        else if(current.getColor().equals("wild") && this.controller.getActivePlayer().isNPC()){
+            int red = 0;
+            int yell = 0;
+            int blue = 0;
+            int green = 0;
+            this.placeCard(current);
+            hand.remove(current);
+            for(int i=0;i<this.controller.getActivePlayer().getHand().size();i++){
+                switch(((Card)this.controller.getActivePlayer().getHand().get(i)).getColor()){
+                    case "red":
+                        red+=1;
+                        break;
+                    case "yellow":
+                        yell+=1;
+                        break;
+                    case "blue":
+                        blue+=1;
+                        break;
+                    case "green":
+                        green+=1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if(red >= yell && red >= blue && red >= green){
+                this.controller.getTopCard().setColor("red");
+            }
+            else if(yell >= red && yell >= blue && red >=green){
+                this.controller.getTopCard().setColor("yellow");
+            }
+            else if(blue >= red && blue >= yell && blue>=green){
+                this.controller.getTopCard().setColor("blue");
+            }
+            else{
+                this.controller.getTopCard().setColor("green");
+            }
+            this.refreshCardLabel(); // Update label to reflect new color
+            this.controller.getActivePlayer().setPlayed(true);
+            if(this.controller.getTopCard().getValue().equals("d4")){
+                this.switchToNext();
+                this.drawFromDeck(4);
+                this.controller.getActivePlayer().setPlayed(true);
+            }
+        }
+       this.showOrHide();
     }
     private void refreshCardLabel(){
         // Update label above pile to reflect current card state
@@ -567,17 +614,38 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.addToPile(current);
         this.refreshCardLabel();
     }   
-    private void nextPlayer(){
-        // Moving to next player
+    private void switchToNext(){
+        // Only nextPlayer can call me
         this.controller.rotatePlayers();
         this.updatePlayerUI();
         this.showOrHide();
-        if(this.controller.getActivePlayer().isNPC()){
-            this.npcAction();
-        }
     }
-    private void npcAction(){
-        
+    private void nextPlayer(){
+        // Moving to next player
+        this.switchToNext();
+        while(this.controller.getActivePlayer().isNPC()){
+            this.npcAction();
+            if(!this.controller.getActivePlayer().isNPC())
+                break;
+            else
+                this.switchToNext();
+        }
+
+    }
+    private void npcAction(){      
+            //Actual Logic
+            for(int i = 0; i < this.controller.getActivePlayer().getHand().size();i++){
+                if(isPlayableCard((Card)this.controller.getActivePlayer().getHand().get(i)) && !this.controller.getActivePlayer().hasPlayed()){
+                    System.out.println(this.controller.getActivePlayer().getName() + " is playing: " + (Card)this.controller.getActivePlayer().getHand().get(i)); //Logging
+                    this.handleCard((Card)this.controller.getActivePlayer().getHand().get(i),this.controller.getActivePlayer().getHand());
+                    this.controller.getActivePlayer().setPlayed(true);
+                }
+            }
+            if(!this.controller.getActivePlayer().hasPlayed()){
+                System.out.println(this.controller.getActivePlayer().getName() + " is drawing!");
+                this.drawFromDeck(1);        
+                this.controller.getActivePlayer().setPlayed(true);
+            }        
     }
     private void updatePlayerUI(){
         // For updating various UI elements
@@ -623,7 +691,11 @@ public class GameScreen extends javax.swing.JFrame {
                 else{
                     image = "/resources/cards/card_back_alt.png";
                 }
-                phand.get(j).setButton((Object)new JButton(new ImageIcon(this.getClass().getResource(image))));
+                try{
+                    phand.get(j).setButton((Object)new JButton(new ImageIcon(this.getClass().getResource(image))));
+                }catch(NullPointerException e){
+                    System.out.println("ERROR" + " " + this.getClass().getResource(image) + " " + image);
+                }
                 JButton b = (JButton)(phand.get(j).getButton());
                 b.setBorder(null);
                 final int current = j;
@@ -645,17 +717,24 @@ public class GameScreen extends javax.swing.JFrame {
     private void showOrHide(){
         // Controlling when active hand is visible/hidden + show/hide buttons
         if(((Player)(this.controller.getPlayers().get(0))).isNPC()){
-            //TEMPORARY SETTINGS FOR TESTING PURPOSES!!!!!!!!!
-            //p1hand.setVisible(false); 
-            //showhideButton.setEnabled(false);
-            //showButton.setVisible(false);
-            //deckButton.setEnabled(false);
+            p1hand.setVisible(false); 
+            showhideButton.setEnabled(false);
+            showButton.setVisible(false);
+            deckButton.setEnabled(false);
         }
         else{
-            p1hand.setVisible(false);
-            showhideButton.setEnabled(false);
-            showButton.setVisible(true);
-            deckButton.setEnabled(true);
+                deckButton.setEnabled(false);
+                p1hand.setVisible(true);
+                showhideButton.setEnabled(true);
+                showButton.setVisible(false);
+            if(!this.controller.getActivePlayer().hasPlayed()){
+                deckButton.setEnabled(true);
+                p1hand.setVisible(false);
+                showhideButton.setEnabled(false);
+                showButton.setVisible(true);
+            }
+                
+            
 
         }
 
@@ -687,7 +766,7 @@ public class GameScreen extends javax.swing.JFrame {
     private void drawFromDeck(int count){
         // Draws from deck and adds new card(s) to hand
         for(int i=0;i<count;i++){
-            Player current = this.controller.getPlayers().get(0);
+            Player current = this.controller.getActivePlayer();
             Deck d = this.controller.getDeck();
             Card c = d.drawCard();
             current.addCard(c);
@@ -696,9 +775,9 @@ public class GameScreen extends javax.swing.JFrame {
             }
             // If the single drawn card is playable, then the player can play it (or any other cards technically)
             // Will see if this is exploitable, but cards are generally drawn when no other cards are playable
-            if(count == 1 && this.isPlayableCard(c)){
-                this.controller.getActivePlayer().setPlayed(false);
-            }
+            //if(count == 1 && this.isPlayableCard(c)){
+            //    this.controller.getActivePlayer().setPlayed(false);
+            //}
             this.turnButton.setEnabled(true);
             this.updatePlayerUI();
         }
@@ -735,7 +814,7 @@ public class GameScreen extends javax.swing.JFrame {
         // Basically a card count.
         JLabel[] labels = new JLabel[]{rank1,rank2,rank3,rank4};
         JLabel[] labelnames = new JLabel[]{rank1name,rank2name,rank3name,rank4name};
-        for(int i=0;i<labels.length;i++){
+        for(int i=0;i<this.controller.getPlayers().size();i++){
             Player p = this.controller.getPlayers().get(i);
             String NPC = p.isNPC() ? "(NPC)" : "";
             labels[i].setText(p.getName() + " " + NPC);
