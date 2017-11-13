@@ -533,6 +533,8 @@ public class GameScreen extends javax.swing.JFrame {
                 this.switchToNext();
                 this.drawFromDeck(2);
                 this.controller.getActivePlayer().setPlayed(true);
+                if(this.controller.getActivePlayer().isNPC())
+                    this.nextPlayer();
             }
             // Player has played card, so switch flag
             this.controller.getActivePlayer().setPlayed(true);
@@ -801,6 +803,7 @@ public class GameScreen extends javax.swing.JFrame {
                 !this.controller.getActivePlayer().isNPC()){
             this.drawFromDeck(2);
         }
+        p1hand.setVisible(false);
         this.nextPlayer();
     }//GEN-LAST:event_turnButtonActionPerformed
 
