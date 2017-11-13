@@ -35,6 +35,9 @@ public class GameControl {
     public void setDifficulty(int diff){
         this.difficulty = diff; //0 = easy, 1 = hardest
     }
+    public Card getTopCard(){
+        return this.pile.get(this.pile.size()-1);
+    }
     public boolean isClockwise(){
         return this.clockwise;
     }
