@@ -191,7 +191,7 @@ public class Menu extends javax.swing.JFrame {
         player4Name.setText("Enter a name...");
         player4Name.setDisabledTextColor(new java.awt.Color(100, 100, 100));
         player4Name.setEnabled(false);
-        player4Name.setText(getNames());
+        player4Name.setText(getNewName());
         gameSetup.getContentPane().add(player4Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 230, 110, -1));
 
         player1Name.setToolTipText("");
@@ -202,7 +202,7 @@ public class Menu extends javax.swing.JFrame {
         player2Name.setText("Enter a name...");
         player2Name.setDisabledTextColor(new java.awt.Color(100, 100, 100));
         player2Name.setEnabled(false);
-        player2Name.setText(getNames());
+        player2Name.setText(getNewName());
         player2Name.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 player2NameActionPerformed(evt);
@@ -213,7 +213,7 @@ public class Menu extends javax.swing.JFrame {
         player3Name.setText("Enter a name...");
         player3Name.setDisabledTextColor(new java.awt.Color(100, 100, 100));
         player3Name.setEnabled(false);
-        player3Name.setText(getNames());
+        player3Name.setText(getNewName());
         gameSetup.getContentPane().add(player3Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 200, 110, -1));
 
         startButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/start.png"))); // NOI18N
@@ -318,25 +318,28 @@ public class Menu extends javax.swing.JFrame {
     private void diffComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diffComboActionPerformed
         // Dont need anything here
     }//GEN-LAST:event_diffComboActionPerformed
-    private String getNames(){ 
-            String testName = this.controller.getNPCName();
+    
+    private String getNewName(){ 
+            // Get single player name, and make 
+            //     sure that name isnt already being used
+            String tmpName = this.controller.getNPCName();
             String[] arr = {player1Name.getText(),player2Name.getText(),player3Name.getText(),player4Name.getText()};
             for(int i=0;i<arr.length;i++){
-                if(testName.equals(arr[i])){
+                if(tmpName.equals(arr[i])){
                     i=0;
-                    testName = this.controller.getNPCName();
+                    tmpName = this.controller.getNPCName();
                 }
             }
-            return testName;
+            return tmpName;
         
     }
     private void numplayerComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numplayerComboActionPerformed
         switch(Integer.parseInt(String.valueOf(numplayerCombo.getSelectedItem()))){
             case 1: // For disabled name boxes with the number of players selected
                 player1Name.setEnabled(true);
-                player2Name.setText(getNames());
-                player3Name.setText(getNames());
-                player4Name.setText(getNames());
+                player2Name.setText(getNewName());
+                player3Name.setText(getNewName());
+                player4Name.setText(getNewName());
                 player2Name.setEnabled(false);
                 player3Name.setEnabled(false);
                 player4Name.setEnabled(false);
@@ -344,8 +347,8 @@ public class Menu extends javax.swing.JFrame {
             case 2:
                 player2Name.setEnabled(true);
                 player2Name.setText("");
-                player3Name.setText(getNames());
-                player4Name.setText(getNames());
+                player3Name.setText(getNewName());
+                player4Name.setText(getNewName());
                 player3Name.setEnabled(false);
                 player4Name.setEnabled(false);
                 break;
@@ -355,7 +358,7 @@ public class Menu extends javax.swing.JFrame {
                 player4Name.setEnabled(false);
                 player2Name.setText("");
                 player3Name.setText("");
-                player4Name.setText(getNames());
+                player4Name.setText(getNewName());
                 break;
             case 4:
                 player2Name.setEnabled(true);
