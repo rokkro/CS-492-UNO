@@ -4,7 +4,11 @@
  * and open the template in the editor.
  */
 package uno;
+/*
+TODO: drawStack implementation
 
+
+*/
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,7 +42,7 @@ public class GameScreen extends javax.swing.JFrame {
     private GameControl controller;
     public GameScreen(GameControl c){
         initComponents();
-        bgCover.setVisible(false); // Hide blurry overlay
+        //bgCover.setVisible(false); // Hide blurry overlay
         this.controller = c;
         p1hand.setVisible(false); // Make main player's hand hidden to avoid peeking
         // Put down a first card
@@ -46,11 +50,12 @@ public class GameScreen extends javax.swing.JFrame {
         Card current = d.drawCard();
         while(current.isSpecial()) // Prevent first card from being special
             current = d.AddandRedraw(current);
-        this.placeCard(current);
+        this.updatePileButton(current);
         this.updatePlayerUI();
     }
     public GameScreen() {
         initComponents();
+        this.controller = new GameControl();
     }
 
     @SuppressWarnings("unchecked")
@@ -306,6 +311,7 @@ public class GameScreen extends javax.swing.JFrame {
         bgCover.setMinimumSize(new java.awt.Dimension(900, 636));
         bgCover.setOpaque(true);
         bgCover.setPreferredSize(new java.awt.Dimension(900, 636));
+        bgCover.setVisible(false);
         getContentPane().add(bgCover, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, -1, -1));
 
         currentCard.setPreferredSize(new java.awt.Dimension(97, 136));
@@ -316,8 +322,6 @@ public class GameScreen extends javax.swing.JFrame {
         deckButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/cards/card_back_alt.png"))); // NOI18N
         deckButton.setBorder(null);
         deckButton.setBorderPainted(false);
-        deckButton.setOpaque(false);
-        deckButton.setPreferredSize(new java.awt.Dimension(97, 136));
         deckButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deckButtonActionPerformed(evt);
@@ -512,45 +516,25 @@ public class GameScreen extends javax.swing.JFrame {
         Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
         if(current.getColor().equals(top.getColor()) || current.getValue() == top.getValue()){
             deckButton.setEnabled(false); // Placing a card, so cant draw another
-            this.placeCard(current); // Place card onto pile
+            this.updatePileButton(current); // Place card onto pile
             hand.remove(current); // Remove card from hand
-            
-            if(current.getValue().equals("reverse")){
+            if(current.getValue().equals("reverse"))
                 this.controller.reverse(); // Reverse direction
-                // Update background image to reflect playing direction
-                if(this.controller.isClockwise()){
-                    this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgClockwise.jpg")));
-                }
-                else{
-                    this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgCounterclock.jpg")));
-                }
-            }
-            else if(current.getValue().equals("skip")){
-                this.switchToNext();
-                this.nextPlayer();
-            }
+            else if(current.getValue().equals("skip"))
+                this.controller.setRotationFactor(2);
             else if(current.getValue().equals("d2")){ // Draw two
-                this.switchToNext();
-                this.drawFromDeck(2);
-                this.controller.getActivePlayer().setPlayed(true);
-                if(this.controller.getActivePlayer().isNPC())
-                    this.nextPlayer();
+                this.controller.incrementDrawStack(2);
             }
             // Player has played card, so switch flag
             this.controller.getActivePlayer().setPlayed(true);
         }
         else if(current.getColor().equals("wild") && !this.controller.getActivePlayer().isNPC()){
             deckButton.setEnabled(false);
-            this.placeCard(current);
+            this.updatePileButton(current);
             hand.remove(current);
-            // Hide everything to show the color selection overlay
-            // Need to hide hands since they can show through bgCover with mouse hover
-            bgCover.setVisible(true);
-            p1hand.setVisible(false); 
-            p2hand.setVisible(false);
-            p3hand.setVisible(false);
-            p4hand.setVisible(false);
-            colorSelect.setVisible(true);
+            this.displayColorSelect();
+            if(current.getValue().equals("d4"))
+                this.controller.incrementDrawStack(4);
             this.controller.getActivePlayer().setPlayed(true);
         }
         else if(current.getColor().equals("wild") && this.controller.getActivePlayer().isNPC()){
@@ -558,7 +542,7 @@ public class GameScreen extends javax.swing.JFrame {
             int yell = 0;
             int blue = 0;
             int green = 0;
-            this.placeCard(current);
+            this.updatePileButton(current);
             hand.remove(current);
             for(int i=0;i<this.controller.getActivePlayer().getHand().size();i++){
                 switch(((Card)this.controller.getActivePlayer().getHand().get(i)).getColor()){
@@ -591,20 +575,34 @@ public class GameScreen extends javax.swing.JFrame {
                 this.controller.getTopCard().setColor("green");
             }
             this.refreshCardLabel(); // Update label to reflect new color
-            this.controller.getActivePlayer().setPlayed(true);
-            if(this.controller.getTopCard().getValue().equals("d4")){
-                this.switchToNext();
-                this.drawFromDeck(4);
-                this.controller.getActivePlayer().setPlayed(true);
-            }
+            if(this.controller.getTopCard().getValue().equals("d4"))
+                this.controller.incrementDrawStack(4);
+            this.controller.getActivePlayer().setPlayed(true);            
         }
-       this.showOrHide();
+    }
+    private void displayColorSelect(){
+        // Hide everything to show the color selection overlay
+        // Need to hide hands since they can show through bgCover with mouse hover
+        bgCover.setVisible(true);
+        p1hand.setVisible(false); 
+        p2hand.setVisible(false);
+        p3hand.setVisible(false);
+        p4hand.setVisible(false);
+        colorSelect.setVisible(true);
     }
     private void refreshCardLabel(){
         // Update label above pile to reflect current card state
         this.colorName.setText(this.controller.getPile().get(this.controller.getPile().size()-1).getColor() + " " + this.controller.getPile().get(this.controller.getPile().size()-1).getValue());
     }
-    private void placeCard(Card current){
+    private void refreshBgArrow(){
+        if(this.controller.isClockwise()){
+            this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgClockwise.jpg")));
+        }
+        else{
+            this.bgLabel.setIcon(new ImageIcon(this.getClass().getResource("/resources/bgCounterclock.jpg")));
+        }
+    }
+    private void updatePileButton(Card current){
         // Placing card onto pile
         currentCard.removeAll(); // Need to do this to place new button
         current.setButton(new JButton(new ImageIcon(this.getClass().getResource(current.getImage()))));
@@ -616,6 +614,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.addToPile(current);
         this.refreshCardLabel();
     }   
+    
     private void switchToNext(){
         // Only nextPlayer can call me
         this.controller.rotatePlayers();
@@ -634,6 +633,7 @@ public class GameScreen extends javax.swing.JFrame {
         }
 
     }
+    
     private void npcAction(){      
             //Actual Logic
             for(int i = 0; i < this.controller.getActivePlayer().getHand().size();i++){
@@ -651,6 +651,7 @@ public class GameScreen extends javax.swing.JFrame {
     }
     private void updatePlayerUI(){
         // For updating various UI elements
+        this.refreshBgArrow();
           //Turn Button:
         if(!this.controller.getActivePlayer().isNPC()){
             // If not NPC
@@ -735,9 +736,6 @@ public class GameScreen extends javax.swing.JFrame {
                 showhideButton.setEnabled(false);
                 showButton.setVisible(true);
             }
-                
-            
-
         }
 
     }
@@ -877,10 +875,10 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.getPile().get(this.controller.getPile().size()-1).setColor(color);
         this.refreshCardLabel(); // Update label to reflect new color
         // If it's a Draw four card, make the next player draw 4
-        if(this.controller.getPile().get(this.controller.getPile().size()-1).getValue().equals("d4")){
+        /*if(this.controller.getPile().get(this.controller.getPile().size()-1).getValue().equals("d4")){
             this.nextPlayer();
             this.drawFromDeck(4);
-        }
+        }*/
     }
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         // Canceling a wild card
@@ -895,7 +893,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.getActivePlayer().getHand().add(top);
         this.controller.getPile().remove(this.controller.getPile().size()-1);
         this.updatePlayerUI();
-        this.placeCard(this.controller.getPile().get(this.controller.getPile().size()-1));
+        this.updatePileButton(this.controller.getPile().get(this.controller.getPile().size()-1));
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     /**
