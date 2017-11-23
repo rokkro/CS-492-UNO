@@ -516,17 +516,6 @@ public class GameScreen extends javax.swing.JFrame {
         m.setVisible(true);
         dispose();
     }
-    /*private boolean isPlayableCard(Card current){
-        // Similar to handleCard, just says if you can place whatever 'current' is.
-        Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
-        if(current.getColor().equals(top.getColor()) || current.getValue() == top.getValue()){
-            return true;
-        }
-        else if(current.getColor().equals("wild")){
-            return true;
-        }
-        return false;
-    }*/
     private void handleCard(Card current, List<Card> hand){
         // Compare and place card. Handle special cards appropriately
         if(!hand.equals(this.controller.getActivePlayer().getHand())){ // If you're clicking a card belonging to a non-active player.
@@ -639,16 +628,6 @@ public class GameScreen extends javax.swing.JFrame {
     }   
 
     private void nextPlayer(){
-        // Moving to next player
-        //this.switchToNext();
-        /*
-        while(this.controller.getActivePlayer().isNPC()){
-            this.npcAction();
-            if(!this.controller.getActivePlayer().isNPC())
-                break;
-            else
-                //this.switchToNext();
-        }*/
         this.controller.endTurn(true);
     }
     
@@ -656,11 +635,11 @@ public class GameScreen extends javax.swing.JFrame {
     private void refreshPlayerUI(){
         // For updating various UI elements
         this.refreshBgArrow();
-          //Turn Button:
+        //Turn Button:
         if(!this.controller.getActivePlayer().isNPC()){
             // If not NPC
             // If has played card vs hasnt enable turn button
-            if(this.controller.getActivePlayer().hasPlayed())
+            if(this.controller.getActivePlayer().hasPlayed() || !deckButton.isVisible())
                 turnButton.setEnabled(true);
             else
                 turnButton.setEnabled(false);
@@ -826,6 +805,7 @@ public class GameScreen extends javax.swing.JFrame {
         // Pause the game rotation and show the pause screen + rankings
         this.controller.pauseGame(true);
         bgCover.setVisible(true);
+        currentCard.setVisible(false);
         p1hand.setVisible(false);
         p1handcontainer.setVisible(false);
         p2hand.setVisible(false);
@@ -839,6 +819,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.pauseGame(false);
         this.resumeGame();
         pauseScreen.setVisible(false);
+        currentCard.setVisible(true);
     }//GEN-LAST:event_resumeButtonActionPerformed
 
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
@@ -850,7 +831,6 @@ public class GameScreen extends javax.swing.JFrame {
             showButton.setVisible(true);
             hideButton.setEnabled(false);
         }
-        p1handcontainer.setVisible(true);
         bgCover.setVisible(false);
         p2hand.setVisible(true);
         p3hand.setVisible(true);
@@ -877,11 +857,6 @@ public class GameScreen extends javax.swing.JFrame {
         this.colorSelect.setVisible(false);
         this.controller.getPile().get(this.controller.getPile().size()-1).setColor(color);
         this.refreshCardLabel(); // Update label to reflect new color
-        // If it's a Draw four card, make the next player draw 4
-        /*if(this.controller.getPile().get(this.controller.getPile().size()-1).getValue().equals("d4")){
-            this.nextPlayer();
-            this.drawFromDeck(4);
-        }*/
     }
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         // Canceling a wild card
@@ -893,6 +868,9 @@ public class GameScreen extends javax.swing.JFrame {
         deckButton.setEnabled(true);
         // Replace card on pile before wild card
         Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
+        if(top.getValue().equals("d4")){
+            this.controller.incrementDrawStack(-4);
+        }
         this.controller.getActivePlayer().getHand().add(top);
         this.controller.getPile().remove(this.controller.getPile().size()-1);
         this.refreshPlayerUI();
