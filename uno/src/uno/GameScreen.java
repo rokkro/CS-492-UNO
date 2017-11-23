@@ -67,10 +67,18 @@ public class GameScreen extends javax.swing.JFrame {
                             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                    GameScreen.this.controller.endTurn(false);
+                    GameScreen.this.controller.setTurn(false);
                     GameScreen.this.controller.rotatePlayers();
                     GameScreen.this.showOrHideElements();
                     refreshPlayerUI();
+                    if(GameScreen.this.controller.getActivePlayer().isNPC()){
+                        GameScreen.this.npcAction();
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
             }
         });
@@ -547,13 +555,12 @@ public class GameScreen extends javax.swing.JFrame {
                 this.controller.incrementDrawStack(4);
             this.controller.getActivePlayer().setPlayed(true);
         }
-        /*
         else if(current.getColor().equals("wild") && this.controller.getActivePlayer().isNPC()){
             int red = 0;
             int yell = 0;
             int blue = 0;
             int green = 0;
-            this.updatePileButton(current);
+            this.placeNewCard(current);
             hand.remove(current);
             for(int i=0;i<this.controller.getActivePlayer().getHand().size();i++){
                 switch(((Card)this.controller.getActivePlayer().getHand().get(i)).getColor()){
@@ -589,7 +596,7 @@ public class GameScreen extends javax.swing.JFrame {
             if(this.controller.getTopCard().getValue().equals("d4"))
                 this.controller.incrementDrawStack(4);
             this.controller.getActivePlayer().setPlayed(true);            
-        }*/
+        }
     }
     private void displayColorSelect(){
         // Hide everything to show the color selection overlay
@@ -628,7 +635,7 @@ public class GameScreen extends javax.swing.JFrame {
     }   
 
     private void nextPlayer(){
-        this.controller.endTurn(true);
+        this.controller.setTurn(true);
     }
     
     private void refreshPlayerUI(){
@@ -748,7 +755,21 @@ public class GameScreen extends javax.swing.JFrame {
         m.setVisible(true);
         dispose();
     }//GEN-LAST:event_mmButtonActionPerformed
-
+    public void npcAction(){      
+        //Actual Logic
+        List<Card> playable = this.controller.getPlayableCards();
+        if(playable.size() == 0){
+            System.out.println(this.controller.getActivePlayer().getName() + " is drawing!");
+            this.controller.drawCards(1);    
+            this.controller.getActivePlayer().setPlayed(true);
+        }
+        else{
+            System.out.println(this.controller.getActivePlayer().getName() + " is playing: " + playable.get(0)); //Logging
+            this.handleCard(playable.get(0), this.controller.getActivePlayer().getHand());
+        }
+        this.nextPlayer();
+        
+    }
     private void drawFromDeck(int count){
         // Draws from deck and adds new card(s) to hand
         this.controller.drawCards(count);

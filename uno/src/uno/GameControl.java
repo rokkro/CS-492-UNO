@@ -67,7 +67,7 @@ public class GameControl {
     public Deck getDeck(){
         return this.deck;
     }
-    public void endTurn(boolean state){
+    public void setTurn(boolean state){
         this.turnEnded = state;
     }
     public boolean isTurnEnded(){
@@ -124,32 +124,22 @@ public class GameControl {
         }
         this.activePlayer = this.players.get(0);
     }
-    public List<Player> getActiveNPCs(){
-        // Get list of players who are NPCs (not used for anything right now)
-        List<Player> lst = new ArrayList();
-        for(int i=0;i<this.players.size();i++){
-            if(this.players.get(i).isNPC() && this.players.get(i).getHand().size()>=1){
-                lst.add(this.players.get(i));
-            }
-        }
-        return lst;
+    private boolean isCardPlayable(Card c){
+        if(c.getColor().equals(this.getTopCard().getColor()))
+            return true;
+        else if(c.getValue().equals(this.getTopCard().getValue()))
+            return true;
+        else if(c.getColor().equals("wild"))
+            return true;
+        return false;
     }
-
-    /*
-    private void npcAction(){      
-        //Actual Logic
+    public List<Card> getPlayableCards(){
+        List<Card> playable = new ArrayList();
         for(int i = 0; i < this.getActivePlayer().getHand().size();i++){
-            if(isPlayableCard((Card)this.getActivePlayer().getHand().get(i)) && !this.getActivePlayer().hasPlayed()){
-                System.out.println(this.getActivePlayer().getName() + " is playing: " + (Card)this.getActivePlayer().getHand().get(i)); //Logging
-                this.handleCard((Card)this.getActivePlayer().getHand().get(i),this.getActivePlayer().getHand());
-                this.getActivePlayer().setPlayed(true);
-            }
+            Card current = (Card)this.activePlayer.getHand().get(i);
+            if(this.isCardPlayable(current))
+                playable.add(current);
         }
-        if(!this.getActivePlayer().hasPlayed()){
-            System.out.println(this.getActivePlayer().getName() + " is drawing!");
-            this.drawFromDeck(1);        
-            this.getActivePlayer().setPlayed(true);
-        }        
+        return playable;
     }
-    */
 }
