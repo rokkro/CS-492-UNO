@@ -373,6 +373,7 @@ public class GameScreen extends javax.swing.JFrame {
         getContentPane().add(p1name, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, 530, 40));
 
         p3hand.setBackground(new java.awt.Color(255, 255, 255));
+        p3hand.setBorder(null);
         p3hand.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         p3hand.setAutoscrolls(true);
         p3hand.setOpaque(false);
@@ -387,6 +388,7 @@ public class GameScreen extends javax.swing.JFrame {
         getContentPane().add(p3hand, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, -20, 520, 130));
 
         p4hand.setBackground(new java.awt.Color(255, 255, 255));
+        p4hand.setBorder(null);
         p4hand.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         p4hand.setAutoscrolls(true);
         p4hand.setOpaque(false);
@@ -401,6 +403,7 @@ public class GameScreen extends javax.swing.JFrame {
         getContentPane().add(p4hand, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 110, 320));
 
         p2hand.setBackground(new java.awt.Color(255, 255, 255));
+        p2hand.setBorder(null);
         p2hand.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         p2hand.setAutoscrolls(true);
         p2hand.setOpaque(false);
@@ -415,6 +418,7 @@ public class GameScreen extends javax.swing.JFrame {
         getContentPane().add(p2hand, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 140, 110, 320));
 
         p1hand.setBackground(new java.awt.Color(255, 255, 255));
+        p1hand.setBorder(null);
         p1hand.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         p1hand.setAutoscrolls(true);
         p1hand.setOpaque(false);
@@ -725,23 +729,27 @@ public class GameScreen extends javax.swing.JFrame {
             showButton.setVisible(false);
             deckButton.setEnabled(false);
         }
-        else{
-                deckButton.setEnabled(false);
+        else{                
+            if(this.controller.getActivePlayer().hasPlayed()){
                 p1hand.setVisible(true);
+                deckButton.setEnabled(false);
                 hideButton.setEnabled(true);
                 showButton.setVisible(false);
-            if(!this.controller.getActivePlayer().hasPlayed()){
-                deckButton.setEnabled(true);
+            }
+            else{
                 p1hand.setVisible(false);
+                deckButton.setEnabled(true);
                 hideButton.setEnabled(false);
                 showButton.setVisible(true);
             }
         }
-
     }
 
     private void hideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideButtonActionPerformed
-        this.showOrHideElements();
+        //this.showOrHideElements();
+        this.p1hand.setVisible(false);
+        this.hideButton.setEnabled(false);
+        this.showButton.setVisible(true);
     }//GEN-LAST:event_hideButtonActionPerformed
 
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
@@ -765,27 +773,20 @@ public class GameScreen extends javax.swing.JFrame {
 
     private void drawFromDeck(int count){
         // Draws from deck and adds new card(s) to hand
-        for(int i=0;i<count;i++){
-            Player current = this.controller.getActivePlayer();
-            Deck d = this.controller.getDeck();
-            Card c = d.drawCard();
-            current.addCard(c);
-            if(d.deckSize() == 0){
-                deckButton.setVisible(false);
-            }
-            // If the single drawn card is playable, then the player can play it (or any other cards technically)
-            // Will see if this is exploitable, but cards are generally drawn when no other cards are playable
-            //if(count == 1 && this.isPlayableCard(c)){
-            //    this.controller.getActivePlayer().setPlayed(false);
-            //}
-            this.turnButton.setEnabled(true);
-            this.refreshPlayerUI();
+        this.controller.drawCards(count);
+        if(this.controller.getDeck().deckSize() == 0){
+            deckButton.setVisible(false);
         }
+        // If the single drawn card is playable, then the player can play it (or any other cards technically)
+        // Will see if this is exploitable, but cards are generally drawn when no other cards are playable
+        //if(count == 1 && this.isPlayableCard(c)){
+        //    this.controller.getActivePlayer().setPlayed(false);
+        //}
+        this.turnButton.setEnabled(true);
+        this.refreshPlayerUI();
     }
     private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
         // Draw a new card
-        //if(this.controller.getActivePlayer().hasPlayed())
-        //    return; // If active player has already played, dont draw
         this.controller.getActivePlayer().setPlayed(true);
         deckButton.setEnabled(false); // Disable deck button since it's been used once
         drawFromDeck(1);
@@ -801,7 +802,6 @@ public class GameScreen extends javax.swing.JFrame {
                 !this.controller.getActivePlayer().isNPC()){
             this.drawFromDeck(2);
         }
-        p1hand.setVisible(false);
         this.nextPlayer();
     }//GEN-LAST:event_turnButtonActionPerformed
 
@@ -827,6 +827,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.pauseGame(true);
         bgCover.setVisible(true);
         p1hand.setVisible(false);
+        p1handcontainer.setVisible(false);
         p2hand.setVisible(false);
         p3hand.setVisible(false);
         p4hand.setVisible(false);
@@ -844,10 +845,12 @@ public class GameScreen extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_quitButtonActionPerformed
     private void resumeGame(){
+        p1handcontainer.setVisible(true);
         if(!this.controller.getActivePlayer().isNPC()){
             showButton.setVisible(true);
             hideButton.setEnabled(false);
         }
+        p1handcontainer.setVisible(true);
         bgCover.setVisible(false);
         p2hand.setVisible(true);
         p3hand.setVisible(true);
