@@ -60,12 +60,12 @@ public class GameScreen extends javax.swing.JFrame {
         Thread thread = new Thread(new Runnable(){
             public void run(){
                 while(true){
-                    while(!GameScreen.this.controller.getTurnState()){
-                    try {
-                        Thread.sleep(0);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    while(!GameScreen.this.controller.isTurnEnded() || GameScreen.this.controller.isPaused()){
+                        try {
+                            Thread.sleep(0);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                     GameScreen.this.controller.endTurn(false);
                     GameScreen.this.controller.rotatePlayers();
@@ -631,7 +631,6 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.endTurn(true);
     }
     
-
     private void refreshPlayerUI(){
         // For updating various UI elements
         this.refreshBgArrow();
