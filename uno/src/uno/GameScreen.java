@@ -594,7 +594,6 @@ public class GameScreen extends javax.swing.JFrame {
         }
         this.refreshCurrentCard();
         this.refreshCardLabel();
-        //this.refreshPlayerUI();
     }
     private void refreshPlayerUI(){
         // For updating various UI elements
@@ -777,7 +776,7 @@ public class GameScreen extends javax.swing.JFrame {
     }
     private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
         // Pause the game rotation and show the pause screen + rankings
-        this.controller.pauseGame(true);
+        this.controller.setGameState(true);
         bgCover.setVisible(true);
         currentCard.setVisible(false);
         p1hand.setVisible(false);
@@ -790,7 +789,7 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_pauseButtonActionPerformed
 
     private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed
-        this.controller.pauseGame(false);
+        this.controller.setGameState(false);
         this.resumeGame();
         pauseScreen.setVisible(false);
         currentCard.setVisible(true);
@@ -801,15 +800,6 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_quitButtonActionPerformed
     private void resumeGame(){
         p1handcontainer.setVisible(true);
-        /*
-        if(!this.controller.getActivePlayer().isNPC()){
-            showButton.setVisible(true);
-            hideButton.setEnabled(false);
-        }
-        else{
-            showButton.setVisible(true);
-            hideButton.setEnabled(false);
-        }*/
         this.showOrHideElements();
         bgCover.setVisible(false);
         p2hand.setVisible(true);
@@ -859,7 +849,6 @@ public class GameScreen extends javax.swing.JFrame {
         this.controller.getActivePlayer().getHand().add(top);
         this.controller.getPile().remove(this.controller.getPile().size()-1);
         this.refreshPlayerUI();
-        //this.refreshCurrentCard(this.controller.getPile().get(this.controller.getPile().size()-1));
         this.refreshCurrentCard();
     }//GEN-LAST:event_buttonCancelActionPerformed
 

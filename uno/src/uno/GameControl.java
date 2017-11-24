@@ -26,24 +26,15 @@ public class GameControl {
         String result = names[(int)(Math.random() * names.length)];
         return result;
     }
-    public void initializeGamePlay(){
-        // Create a deck, and give all players 7 cards
-        this.deck = new Deck();
-        for(Player p:this.players){
-            for(int i=0;i<7;i++){
-                p.addCard(this.deck.drawCard());
-            }
-        }
-    }
-    public void reverse(){
-        // Reverse game rotation flag
-        if(this.clockwise)
-            this.clockwise = false;
-        else
-            this.clockwise = true;
-    }
+
     public void incrementDrawStack(int num){
         this.drawStack += num;
+    }
+    public void setGameState(boolean state){
+        this.paused = state;
+    }
+    public List<Player> getPlayers(){
+        return this.players;
     }
     public void setDifficulty(int diff){
         this.difficulty = diff; //0 = easy, 1 = hardest
@@ -84,6 +75,22 @@ public class GameControl {
     public void setNotification(String s){
         this.notificationDecay = 0;
         this.notification = s;
+    }
+    public void initializeGamePlay(){
+        // Create a deck, and give all players 7 cards
+        this.deck = new Deck();
+        for(Player p:this.players){
+            for(int i=0;i<7;i++){
+                p.addCard(this.deck.drawCard());
+            }
+        }
+    }
+    public void reverse(){
+        // Reverse game rotation flag
+        if(this.clockwise)
+            this.clockwise = false;
+        else
+            this.clockwise = true;
     }
     public void drawCards(int num){
         for(int i=0;i<num;i++){
@@ -140,12 +147,6 @@ public class GameControl {
                 return (Player)this.players.get(this.players.size()-1);
         }
     }
-    public void pauseGame(boolean state){
-        this.paused = state;
-    }
-    public List<Player> getPlayers(){
-        return this.players;
-    }
     public void createPlayers(String[] pnames, boolean[] NPC){
         // Create the players
         this.players = new ArrayList();
@@ -183,8 +184,6 @@ public class GameControl {
         Card top = this.getPile().get(this.getPile().size()-1);
         if((current.getColor().equals(top.getColor()) || current.getValue() == top.getValue()) &&
                 !current.getColor().equals("wild")){
-            //deckButton.setEnabled(false); // Placing a card, so cant draw another
-            //this.placeNewCard(current); // Place card onto pile
             this.addToPile(current);
             hand.remove(current); // Remove card from hand
             if(current.getValue().equals("reverse")){
@@ -202,22 +201,17 @@ public class GameControl {
             this.getActivePlayer().setPlayed(true);
         }
         else if(current.getColor().equals("wild") && !this.getActivePlayer().isNPC()){
-            //deckButton.setEnabled(false);
-            //this.placeNewCard(current);
             this.addToPile(current);
             hand.remove(current);
-            //this.displayColorSelect();
             if(current.getValue().equals("d4") && this.getPlayers().size() > 1){
                 this.incrementDrawStack(4);
             }
-            //this.getActivePlayer().setPlayed(true);
         }
         else if(current.getColor().equals("wild") && this.getActivePlayer().isNPC()){
             int red = 0;
             int yell = 0;
             int blue = 0;
             int green = 0;
-            //this.placeNewCard(current);
             this.addToPile(current);
             hand.remove(current);
             for(int i=0;i<this.getActivePlayer().getHand().size();i++){
@@ -250,7 +244,6 @@ public class GameControl {
             else{
                 this.getTopCard().setColor("green");
             }
-            //this.refreshCardLabel(); // Update label to reflect new color
             if(this.getTopCard().getValue().equals("d4")){
                 this.incrementDrawStack(4);
                 this.setNotification(this.getNextPlayer().getName() + " draws 4. Color: " + this.getTopCard().getColor() + ".");
@@ -258,7 +251,6 @@ public class GameControl {
             else{
                 this.setNotification("Color set to " + this.getTopCard().getColor() + ".");
             }
-            //this.getActivePlayer().setPlayed(true);            
         }
     }
 }
