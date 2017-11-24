@@ -14,6 +14,7 @@ public class GameControl {
     private int drawStack = 0; // How many cards next player is required to draw (d2, d4)
     private boolean turnEnded = false;
     private String notification = "";
+    private int notificationDecay = 0;
     
     public static String getNPCName(){ // Get a random name
         String[] names = {"Dolores","Arando","Bram","Cale","Dalkon","Daylen",
@@ -81,6 +82,7 @@ public class GameControl {
         return this.activePlayer;
     }
     public void setNotification(String s){
+        this.notificationDecay = 0;
         this.notification = s;
     }
     public void drawCards(int num){
@@ -117,6 +119,10 @@ public class GameControl {
                 this.drawStack = 0;
                 this.rotateFactor+=1;
             }
+            this.notificationDecay+=1;
+        }
+        if(this.notificationDecay >= 5){
+            this.setNotification("");
         }
         this.rotateFactor = 1;
     }
@@ -183,15 +189,15 @@ public class GameControl {
             hand.remove(current); // Remove card from hand
             if(current.getValue().equals("reverse")){
                 this.reverse(); // Reverse direction
-                this.notification = "Direction reversed.";
+                this.setNotification("Direction reversed.");
             }
             else if(current.getValue().equals("skip")){
                 this.setRotationFactor(2);
-                this.notification = this.getNextPlayer().getName() + " was skipped.";
+                this.setNotification(this.getNextPlayer().getName() + " was skipped.");
             }
             else if(current.getValue().equals("d2")){ // Draw two
                 this.incrementDrawStack(2);
-                this.notification = this.getNextPlayer().getName() + " draws 2.";
+                this.setNotification(this.getNextPlayer().getName() + " draws 2.");
             }
             this.getActivePlayer().setPlayed(true);
         }
@@ -247,10 +253,10 @@ public class GameControl {
             //this.refreshCardLabel(); // Update label to reflect new color
             if(this.getTopCard().getValue().equals("d4")){
                 this.incrementDrawStack(4);
-                this.notification = this.getNextPlayer().getName() + " draws 4. Color: " + this.getTopCard().getColor() + ".";
+                this.setNotification(this.getNextPlayer().getName() + " draws 4. Color: " + this.getTopCard().getColor() + ".");
             }
             else{
-                this.notification = "Color set to " + this.getTopCard().getColor() + ".";
+                this.setNotification("Color set to " + this.getTopCard().getColor() + ".");
             }
             //this.getActivePlayer().setPlayed(true);            
         }

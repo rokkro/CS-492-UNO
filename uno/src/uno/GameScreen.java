@@ -124,7 +124,7 @@ public class GameScreen extends javax.swing.JFrame {
         deckButton = new javax.swing.JButton();
         hideButton = new javax.swing.JToggleButton();
         p1name = new javax.swing.JLabel();
-        warningLabel = new javax.swing.JLabel();
+        notifyLabel = new javax.swing.JLabel();
         p3hand = new javax.swing.JScrollPane();
         p3handcontainer = new javax.swing.JPanel();
         p4hand = new javax.swing.JScrollPane();
@@ -383,13 +383,13 @@ public class GameScreen extends javax.swing.JFrame {
         p1name.setText("(Name)");
         getContentPane().add(p1name, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, 530, 40));
 
-        warningLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        warningLabel.setForeground(new java.awt.Color(254, 254, 254));
-        warningLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        warningLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 217, 0)));
-        warningLabel.setFocusTraversalPolicyProvider(true);
-        warningLabel.setVisible(false);
-        getContentPane().add(warningLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 440, 380, 30));
+        notifyLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        notifyLabel.setForeground(new java.awt.Color(254, 254, 254));
+        notifyLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        notifyLabel.setBorder(null);
+        notifyLabel.setFocusTraversalPolicyProvider(true);
+        notifyLabel.setVisible(false);
+        getContentPane().add(notifyLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 420, 380, 30));
 
         p3hand.setBackground(new java.awt.Color(255, 255, 255));
         p3hand.setBorder(null);
@@ -571,12 +571,16 @@ public class GameScreen extends javax.swing.JFrame {
         currentCard.repaint();
         this.refreshCardLabel();
     }   
-
-    private void nextPlayer(){
+    private void refreshNotification(){
         if(!this.controller.getNotification().isEmpty()){
-            warningLabel.setText(this.controller.getNotification());
-            warningLabel.setVisible(true);
+            notifyLabel.setText(this.controller.getNotification());
+            notifyLabel.setVisible(true);
         }
+        else{
+            notifyLabel.setVisible(false);
+        }
+    }
+    private void nextPlayer(){
         this.controller.setTurn(true);
     }
     private void putCard(Card current, List<Card> hand){
@@ -595,6 +599,7 @@ public class GameScreen extends javax.swing.JFrame {
     private void refreshPlayerUI(){
         // For updating various UI elements
         this.refreshBgArrow();
+        this.refreshNotification();
         //Turn Button:
         if(!this.controller.getActivePlayer().isNPC()){
             // If not NPC
@@ -796,10 +801,16 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_quitButtonActionPerformed
     private void resumeGame(){
         p1handcontainer.setVisible(true);
+        /*
         if(!this.controller.getActivePlayer().isNPC()){
             showButton.setVisible(true);
             hideButton.setEnabled(false);
         }
+        else{
+            showButton.setVisible(true);
+            hideButton.setEnabled(false);
+        }*/
+        this.showOrHideElements();
         bgCover.setVisible(false);
         p2hand.setVisible(true);
         p3hand.setVisible(true);
@@ -907,6 +918,7 @@ public class GameScreen extends javax.swing.JFrame {
     private javax.swing.JToggleButton hideButton;
     private javax.swing.JLabel hudBG;
     private javax.swing.JButton mmButton;
+    private javax.swing.JLabel notifyLabel;
     private javax.swing.JScrollPane p1hand;
     private javax.swing.JPanel p1handcontainer;
     private javax.swing.JLabel p1name;
@@ -934,6 +946,5 @@ public class GameScreen extends javax.swing.JFrame {
     private javax.swing.JToggleButton showButton;
     private javax.swing.JButton turnButton;
     private javax.swing.JButton unoButton;
-    private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
 }
