@@ -62,7 +62,9 @@ public class GameScreen extends javax.swing.JFrame {
         Thread thread = new Thread(new Runnable(){
             public void run(){
                 while(true){
-                    while(!GameScreen.this.controller.isTurnEnded() || GameScreen.this.controller.isPaused()){
+                    while(GameScreen.this.controller.isPaused())
+                        GameScreen.this.pauseGame();
+                    while(!GameScreen.this.controller.isTurnEnded()){
                         try {
                             Thread.sleep(0);
                         } catch (InterruptedException ex) {
@@ -767,14 +769,19 @@ public class GameScreen extends javax.swing.JFrame {
         // Basically a card count.
         JLabel[] labels = new JLabel[]{rank1,rank2,rank3,rank4};
         JLabel[] labelnames = new JLabel[]{rank1name,rank2name,rank3name,rank4name};
-        for(int i=0;i<this.controller.getPlayers().size();i++){
-            Player p = this.controller.getPlayers().get(i);
-            String NPC = p.isNPC() ? "(NPC)" : "";
-            labels[i].setText(p.getName() + " " + NPC);
-            labelnames[i].setText(Integer.toString(p.getHand().size()));
+        List<Player> inactive = this.controller.getInactivePlayers();
+        List<Player> active = this.controller.getPlayers();
+        List<Player> tmp = new ArrayList();
+        tmp.addAll(inactive);
+        tmp.addAll(active);
+        for(int i=0;i<labels.length;i++){
+                Player p = tmp.get(i);
+                String NPC = p.isNPC() ? "(NPC)" : "";
+                labels[i].setText(p.getName() + " " + NPC);
+                labelnames[i].setText(Integer.toString(p.getHand().size()));
         }
     }
-    private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
+    private void pauseGame(){
         // Pause the game rotation and show the pause screen + rankings
         this.controller.setGameState(true);
         bgCover.setVisible(true);
@@ -786,6 +793,9 @@ public class GameScreen extends javax.swing.JFrame {
         p4hand.setVisible(false);
         pauseScreen.setVisible(true);
         this.displayRanking();
+    }
+    private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
+        this.pauseGame();
     }//GEN-LAST:event_pauseButtonActionPerformed
 
     private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed

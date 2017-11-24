@@ -6,6 +6,7 @@ public class GameControl {
     private Deck deck;
     private List<Player> players;
     private Player activePlayer;
+    private List<Player> inactivePlayers = new ArrayList();
     private boolean paused = false;
     private List<Card> pile = new ArrayList();
     private boolean clockwise = true;
@@ -72,6 +73,9 @@ public class GameControl {
     public Player getActivePlayer(){
         return this.activePlayer;
     }
+    public List<Player> getInactivePlayers(){
+        return this.inactivePlayers;
+    }
     public void setNotification(String s){
         this.notificationDecay = 0;
         this.notification = s;
@@ -106,9 +110,14 @@ public class GameControl {
         for(int j=0;j<this.rotateFactor;j++){
             this.getActivePlayer().setPlayed(false);
             for(int i=0;i<this.players.size();i++){
-                if(this.players.get(i).getHand().size()==0)
+                if(this.players.get(i).getHand().size()==0){
+                    this.inactivePlayers.add(this.players.get(i));
                     this.players.remove(i);
+                    this.paused = true;
+                }
             }
+            if(this.players.size() == 0)
+                return;
             if(!this.clockwise){
                 Player tmp = (Player)this.players.get(this.players.size()-1);
                 this.players.add(0, tmp);
@@ -142,7 +151,7 @@ public class GameControl {
         }
         else{
             if(this.players.size() > 1)
-                return (Player)this.players.get(this.players.size()-2);
+                return (Player)this.players.get(this.players.size()-1);
             else
                 return (Player)this.players.get(this.players.size()-1);
         }
