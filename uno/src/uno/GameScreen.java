@@ -14,6 +14,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 /*
 isPlayableCard(Card current) - returns bool. Whether or not you can play a card
 handleCard(Card current, List<Card> hand) Deals with placing card onto pile, checking conditions, and handling various UI elements + state changes from special cards
@@ -73,8 +75,18 @@ public class GameScreen extends javax.swing.JFrame {
                     }
                     GameScreen.this.controller.setTurn(false);
                     GameScreen.this.controller.rotatePlayers();
-                    GameScreen.this.showOrHideElements();
-                    refreshPlayerUI();
+                    try { //Refreshes GUI without flickering
+                        SwingUtilities.invokeAndWait(new Runnable(){
+                            public void run(){
+                                GameScreen.this.showOrHideElements();
+                                GameScreen.this.refreshPlayerUI();
+                            }
+                        });
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InvocationTargetException ex) {
+                        Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     if(GameScreen.this.controller.getActivePlayer().isNPC()){
                         GameScreen.this.npcAction();
                         try {
@@ -271,25 +283,25 @@ public class GameScreen extends javax.swing.JFrame {
         rank4name.setForeground(new java.awt.Color(255, 217, 0));
         rank4name.setText("?");
         rank4name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        pauseScreen.getContentPane().add(rank4name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 110, 40));
+        pauseScreen.getContentPane().add(rank4name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, 170, 40));
 
         rank1name.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         rank1name.setForeground(new java.awt.Color(255, 217, 0));
         rank1name.setText("?");
         rank1name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        pauseScreen.getContentPane().add(rank1name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 80, 110, 40));
+        pauseScreen.getContentPane().add(rank1name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 80, 160, 40));
 
         rank2name.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         rank2name.setForeground(new java.awt.Color(255, 217, 0));
         rank2name.setText("?");
         rank2name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        pauseScreen.getContentPane().add(rank2name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 110, 40));
+        pauseScreen.getContentPane().add(rank2name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 160, 40));
 
         rank3name.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         rank3name.setForeground(new java.awt.Color(255, 217, 0));
         rank3name.setText("?");
         rank3name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        pauseScreen.getContentPane().add(rank3name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 160, 110, 40));
+        pauseScreen.getContentPane().add(rank3name, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 160, 180, 40));
 
         RankingLabel.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         RankingLabel.setForeground(new java.awt.Color(255, 217, 0));
@@ -778,7 +790,11 @@ public class GameScreen extends javax.swing.JFrame {
                 Player p = tmp.get(i);
                 String NPC = p.isNPC() ? "(NPC)" : "";
                 labels[i].setText(p.getName() + " " + NPC);
-                labelnames[i].setText(Integer.toString(p.getHand().size()));
+                int handSize = p.getHand().size();
+                if(handSize > 0)
+                    labelnames[i].setText(Integer.toString(handSize));
+                else
+                    labelnames[i].setText("Winner #" + Integer.toString(i+1));
         }
     }
     private void pauseGame(){
