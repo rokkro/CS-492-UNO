@@ -9,6 +9,7 @@ public class Player {
     private List<Card> hand = new ArrayList(); //Player's hand   
     private boolean NPC; //If they are an NPC or actual player
     private boolean Played; //If they have played a card
+    private boolean declaredUNO;
     //Constructors
     public Player(String name){
         this.name = name;
@@ -19,6 +20,12 @@ public class Player {
         this.name = name;
         this.NPC = NPC;
         this.Played = false;
+    }
+    public boolean hasDeclaredUNO(){
+        return this.declaredUNO;
+    }
+    public void setUNO(boolean state){
+        this.declaredUNO = state;
     }
     public boolean hasPlayed(){
         return this.Played;

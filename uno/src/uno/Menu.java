@@ -121,7 +121,6 @@ public class Menu extends javax.swing.JFrame {
         gameSetup.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         warningLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        warningLabel.setForeground(new java.awt.Color(255, 255, 255));
         warningLabel.setText("Please make sure all fields are filled out.");
         warningLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
         warningLabel.setFocusTraversalPolicyProvider(true);
@@ -155,7 +154,8 @@ public class Menu extends javax.swing.JFrame {
         diffLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
         gameSetup.getContentPane().add(diffLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 50, 70, 30));
 
-        numplayerCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
+        numplayerCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4" }));
+        numplayerCombo.setSelectedIndex(1);
         numplayerCombo.setFocusable(false);
         numplayerCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -335,8 +335,19 @@ public class Menu extends javax.swing.JFrame {
     }
     private void numplayerComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numplayerComboActionPerformed
         switch(Integer.parseInt(String.valueOf(numplayerCombo.getSelectedItem()))){
+            case 0:
+                player1Name.setEnabled(false);
+                player1Name.setText(getNewName());
+                player2Name.setText(getNewName());
+                player3Name.setText(getNewName());
+                player4Name.setText(getNewName());
+                player2Name.setEnabled(false);
+                player3Name.setEnabled(false);
+                player4Name.setEnabled(false);
+                break;
             case 1: // For disabled name boxes with the number of players selected
                 player1Name.setEnabled(true);
+                player1Name.setText("");
                 player2Name.setText(getNewName());
                 player3Name.setText(getNewName());
                 player4Name.setText(getNewName());

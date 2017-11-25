@@ -14,10 +14,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import static java.lang.Math.random;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -54,10 +56,10 @@ public class GameScreen extends javax.swing.JFrame {
         Card current = d.drawCard();
         while(current.isSpecial()) // Prevent first card from being special
             current = d.AddandRedraw(current);
-        //this.refreshCurrentCard(current);
         this.controller.addToPile(current);
         this.refreshCurrentCard();
         this.refreshPlayerUI();
+        this.showOrHideElements();
         this.controlLoop();
     }    
     public void controlLoop(){
@@ -66,6 +68,14 @@ public class GameScreen extends javax.swing.JFrame {
                 while(true){
                     while(GameScreen.this.controller.isPaused())
                         GameScreen.this.pauseGame();
+                    if(GameScreen.this.controller.getActivePlayer().isNPC()){
+                        GameScreen.this.npcAction();
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                     while(!GameScreen.this.controller.isTurnEnded()){
                         try {
                             Thread.sleep(0);
@@ -86,14 +96,6 @@ public class GameScreen extends javax.swing.JFrame {
                         Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (InvocationTargetException ex) {
                         Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    if(GameScreen.this.controller.getActivePlayer().isNPC()){
-                        GameScreen.this.npcAction();
-                        try {
-                            Thread.sleep(1500);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                     }
                 }
             }
@@ -594,7 +596,19 @@ public class GameScreen extends javax.swing.JFrame {
             notifyLabel.setVisible(false);
         }
     }
+    
+    private boolean choice() {
+        return Math.random() < 0.5;
+    }
+    
     private void nextPlayer(){
+        Player current = this.controller.getActivePlayer();
+        if(current.getHand().size() == 1 && !current.hasDeclaredUNO()){
+            if(this.choice()){
+                this.controller.setNotification(current.getName() + " draws 2. Forgot to declare UNO!");
+                this.drawFromDeck(2);
+            }
+        }
         this.controller.setTurn(true);
     }
     private void putCard(Card current, List<Card> hand){
@@ -606,8 +620,7 @@ public class GameScreen extends javax.swing.JFrame {
         if(this.controller.getActivePlayer().hasPlayed()){
             deckButton.setEnabled(false);
         }
-        this.refreshCurrentCard();
-        this.refreshCardLabel();
+
     }
     private void refreshPlayerUI(){
         // For updating various UI elements
@@ -677,6 +690,8 @@ public class GameScreen extends javax.swing.JFrame {
             containers[i].revalidate();
             containers[i].repaint();
         }
+        this.refreshCurrentCard();
+        this.refreshCardLabel();
     }
     private void showOrHideElements(){
         // Controlling when active hand is visible/hidden + show/hide buttons
@@ -710,14 +725,8 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_hideButtonActionPerformed
 
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
-        if(this.controller.getActivePlayer().isNPC()){ 
-            // If you catch an NPC before they end their turn, they draw 2
-            this.drawFromDeck(2);
-        }
-        else{
-            // Have yet to verify if this is necessary
-            this.controller.getActivePlayer().setPlayed(false);
-        }
+
+        this.controller.getActivePlayer().setUNO(true);
         this.nextPlayer(); // Ends turn
     }//GEN-LAST:event_unoButtonActionPerformed
 
@@ -739,8 +748,16 @@ public class GameScreen extends javax.swing.JFrame {
             System.out.println(this.controller.getActivePlayer().getName() + " is playing: " + playable.get(0)); //Logging
             putCard(playable.get(0), this.controller.getActivePlayer().getHand());
         }
+        if(this.controller.getActivePlayer().getHand().size() == 1){
+            if(this.controller.getDifficulty() == 0){
+                if(this.choice())
+                    this.controller.getActivePlayer().setUNO(true);
+            }
+            else{
+                this.controller.getActivePlayer().setUNO(true);
+            }
+        }
         this.nextPlayer();
-        
     }
     private void drawFromDeck(int count){
         // Draws from deck and adds new card(s) to hand
@@ -748,8 +765,9 @@ public class GameScreen extends javax.swing.JFrame {
         if(this.controller.getDeck().deckSize() == 0){
             deckButton.setVisible(false);
         }
-        this.turnButton.setEnabled(true);
-        this.refreshPlayerUI();
+        if(!this.controller.getActivePlayer().isNPC())
+            this.turnButton.setEnabled(true);
+        //this.refreshPlayerUI();
     }
     private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
         // Draw a new card

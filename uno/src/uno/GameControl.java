@@ -1,6 +1,7 @@
 package uno;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class GameControl {
     private Deck deck;
@@ -45,6 +46,9 @@ public class GameControl {
     }
     public Card getTopCard(){
         return this.pile.get(this.pile.size()-1);
+    }
+    public int getDifficulty() {
+        return this.difficulty;
     }
     public boolean isClockwise(){
         return this.clockwise;
@@ -109,6 +113,7 @@ public class GameControl {
         // Rotate to the next player. Should be called from GameScreen's nextPlayer()
         for(int j=0;j<this.rotateFactor;j++){
             this.getActivePlayer().setPlayed(false);
+            this.getActivePlayer().setUNO(false);
             for(int i=0;i<this.players.size();i++){
                 if(this.players.get(i).getHand().size()==0){
                     this.inactivePlayers.add(this.players.get(i));
