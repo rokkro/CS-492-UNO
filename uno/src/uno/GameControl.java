@@ -147,6 +147,45 @@ public class GameControl {
         }
         this.rotateFactor = 1;
     }
+    public int npcAction(){      
+        //Actual Logic
+        List<Card> playable = this.getPlayableCards();
+        if(playable.size() == 0){
+            System.out.println(this.getActivePlayer().getName() + " is drawing!");
+            this.getActivePlayer().setPlayed(true);
+            return 1;
+        }
+        else{
+            System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); //Logging
+            this.handleCard(playable.get(0), this.getActivePlayer().getHand());
+        }
+        if(this.getActivePlayer().getHand().size() == 1){
+            if(this.getDifficulty() == 0){
+                if(this.choice())
+                    this.getActivePlayer().setUNO(true);
+            }
+            else{
+                this.getActivePlayer().setUNO(true);
+            }
+        }
+        this.nextPlayer();
+        return 0;
+    }
+        
+    private boolean choice() {
+        return Math.random() < 0.5;
+    }
+    
+    public void nextPlayer(){
+        Player current = this.getActivePlayer();
+        if(current.getHand().size() == 1 && !current.hasDeclaredUNO()){
+            if(this.choice()){
+                this.setNotification(current.getName() + " draws 2. Forgot to declare UNO!");
+                this.drawCards(2);
+            }
+        }
+        this.setTurn(true);
+    }
     public Player getNextPlayer(){
         if(this.clockwise){
             if(this.players.size() > 1)

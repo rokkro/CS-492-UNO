@@ -69,7 +69,11 @@ public class GameScreen extends javax.swing.JFrame {
                     while(GameScreen.this.controller.isPaused())
                         GameScreen.this.pauseGame();
                     if(GameScreen.this.controller.getActivePlayer().isNPC()){
-                        GameScreen.this.npcAction();
+                        int draw = GameScreen.this.controller.npcAction();
+                        if(draw > 0){
+                            GameScreen.this.drawFromDeck(draw);
+                            GameScreen.this.controller.setTurn(true);
+                        }
                         try {
                             Thread.sleep(1500);
                         } catch (InterruptedException ex) {
@@ -596,31 +600,13 @@ public class GameScreen extends javax.swing.JFrame {
             notifyLabel.setVisible(false);
         }
     }
-    
-    private boolean choice() {
-        return Math.random() < 0.5;
-    }
-    
-    private void nextPlayer(){
-        Player current = this.controller.getActivePlayer();
-        if(current.getHand().size() == 1 && !current.hasDeclaredUNO()){
-            if(this.choice()){
-                this.controller.setNotification(current.getName() + " draws 2. Forgot to declare UNO!");
-                this.drawFromDeck(2);
-            }
-        }
-        this.controller.setTurn(true);
-    }
+
     private void putCard(Card current, List<Card> hand){
         this.controller.handleCard(current, hand);
-        if(current.getColor().equals("wild") && !this.controller.getActivePlayer().isNPC() && !this.controller.getActivePlayer().hasPlayed()){
+        if(current.getColor().equals("wild") && !this.controller.getActivePlayer().hasPlayed()){
             this.displayColorSelect();
             this.controller.getActivePlayer().setPlayed(true);
         }
-        if(this.controller.getActivePlayer().hasPlayed()){
-            deckButton.setEnabled(false);
-        }
-
     }
     private void refreshPlayerUI(){
         // For updating various UI elements
@@ -727,7 +713,7 @@ public class GameScreen extends javax.swing.JFrame {
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
 
         this.controller.getActivePlayer().setUNO(true);
-        this.nextPlayer(); // Ends turn
+        this.controller.nextPlayer(); // Ends turn
     }//GEN-LAST:event_unoButtonActionPerformed
 
     private void mmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mmButtonActionPerformed
@@ -736,29 +722,6 @@ public class GameScreen extends javax.swing.JFrame {
         m.setVisible(true);
         dispose();
     }//GEN-LAST:event_mmButtonActionPerformed
-    public void npcAction(){      
-        //Actual Logic
-        List<Card> playable = this.controller.getPlayableCards();
-        if(playable.size() == 0){
-            System.out.println(this.controller.getActivePlayer().getName() + " is drawing!");
-            this.drawFromDeck(1);    
-            this.controller.getActivePlayer().setPlayed(true);
-        }
-        else{
-            System.out.println(this.controller.getActivePlayer().getName() + " is playing: " + playable.get(0)); //Logging
-            putCard(playable.get(0), this.controller.getActivePlayer().getHand());
-        }
-        if(this.controller.getActivePlayer().getHand().size() == 1){
-            if(this.controller.getDifficulty() == 0){
-                if(this.choice())
-                    this.controller.getActivePlayer().setUNO(true);
-            }
-            else{
-                this.controller.getActivePlayer().setUNO(true);
-            }
-        }
-        this.nextPlayer();
-    }
     private void drawFromDeck(int count){
         // Draws from deck and adds new card(s) to hand
         this.controller.drawCards(count);
@@ -767,7 +730,7 @@ public class GameScreen extends javax.swing.JFrame {
         }
         if(!this.controller.getActivePlayer().isNPC())
             this.turnButton.setEnabled(true);
-        //this.refreshPlayerUI();
+        this.refreshPlayerUI();
     }
     private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
         // Draw a new card
@@ -786,7 +749,7 @@ public class GameScreen extends javax.swing.JFrame {
                 !this.controller.getActivePlayer().isNPC()){
             this.drawFromDeck(2);
         }
-        this.nextPlayer();
+        this.controller.nextPlayer();
     }//GEN-LAST:event_turnButtonActionPerformed
 
     private void showButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showButtonActionPerformed
@@ -802,6 +765,11 @@ public class GameScreen extends javax.swing.JFrame {
         List<Player> inactive = this.controller.getInactivePlayers();
         List<Player> active = this.controller.getPlayers();
         List<Player> tmp = new ArrayList();
+        if(inactive.size() == 3){
+            Player tmpPlayer = active.get(0);
+            inactive.add(tmpPlayer);
+            active.remove(tmpPlayer);
+        }
         tmp.addAll(inactive);
         tmp.addAll(active);
         for(int i=0;i<labels.length;i++){
