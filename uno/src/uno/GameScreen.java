@@ -767,8 +767,10 @@ public class GameScreen extends javax.swing.JFrame {
         List<Player> tmp = new ArrayList();
         if(inactive.size() == 3){
             Player tmpPlayer = active.get(0);
+            tmpPlayer.getHand().clear();
             inactive.add(tmpPlayer);
             active.remove(tmpPlayer);
+            resumeButton.setEnabled(false);
         }
         tmp.addAll(inactive);
         tmp.addAll(active);
