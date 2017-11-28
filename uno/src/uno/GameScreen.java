@@ -694,6 +694,12 @@ public class GameScreen extends javax.swing.JFrame {
                 hideButton.setEnabled(true);
                 showButton.setVisible(false);
             }
+            else if(this.controller.getNumberOfHumans() == 1){
+                p1hand.setVisible(true);
+                deckButton.setEnabled(true);
+                hideButton.setEnabled(false);
+                showButton.setVisible(false);
+            }
             else{
                 p1hand.setVisible(false);
                 deckButton.setEnabled(true);

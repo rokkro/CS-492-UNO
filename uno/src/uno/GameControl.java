@@ -38,6 +38,14 @@ public class GameControl {
     public List<Player> getPlayers(){
         return this.players;
     }
+    public int getNumberOfHumans(){
+        int count = 0;
+        for(Player p:this.players){
+            if(!p.isNPC())
+                count+=1;
+        }
+        return count;
+    }
     public void setDifficulty(int diff){
         this.difficulty = diff; //0 = easy, 1 = hardest
     }
