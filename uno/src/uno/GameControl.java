@@ -147,6 +147,30 @@ public class GameControl {
         }
         this.rotateFactor = 1;
     }
+    public boolean NpcPlayByColor(List<Card> playable){
+        for(Card c: playable){ //Prefer eliminating same color before switching colors
+            if(c.getColor().equals(this.getTopCard().getColor()) && !c.getColor().equals("wild")){
+                System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
+                this.handleCard(c, this.getActivePlayer().getHand());
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean NpcPlayByValue(List<Card> playable){
+        for(Card c: playable){ //Prefer eliminating same color before switching colors
+            if(c.getValue().equals(this.getTopCard().getValue()) && !c.getColor().equals("wild")){
+                System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
+                this.handleCard(c, this.getActivePlayer().getHand());
+                return true;
+            }
+        }
+        return false;
+    }
+    public void NpcPlayFirst(List<Card> playable){
+        System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); 
+        this.handleCard(playable.get(0), this.getActivePlayer().getHand());
+    }
     public int npcAction(){      
         //Actual Logic
         List<Card> playable = this.getPlayableCards();
@@ -156,8 +180,14 @@ public class GameControl {
             return 1;
         }
         else{
-            System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); //Logging
-            this.handleCard(playable.get(0), this.getActivePlayer().getHand());
+            if(this.difficulty == 0){
+                this.NpcPlayFirst(playable);
+            }
+            else{
+                if(!this.NpcPlayByColor(playable))
+                    if(!this.NpcPlayByValue(playable))
+                        this.NpcPlayFirst(playable);
+            }
         }
         if(this.getActivePlayer().getHand().size() == 1){
             if(this.getDifficulty() == 0){
