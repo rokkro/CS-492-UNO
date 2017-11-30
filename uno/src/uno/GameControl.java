@@ -114,7 +114,11 @@ public class GameControl {
                 return;
             List<Card> hand = this.activePlayer.getHand();
             Card c = this.deck.drawCard();
-            hand.add(c);
+            if(this.isCardPlayable(c) && !c.getColor().equals("wild")){
+                this.handleCard(c, hand);
+            }
+            else
+                hand.add(c);
         }
     }
     public void rotatePlayers(){

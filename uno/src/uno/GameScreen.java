@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package uno;
-/*
-TODO: drawStack implementation
 
-
-*/
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,20 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-/*
-isPlayableCard(Card current) - returns bool. Whether or not you can play a card
-handleCard(Card current, List<Card> hand) Deals with placing card onto pile, checking conditions, and handling various UI elements + state changes from special cards
-refreshCardLabel() Updates label above the pile.
-PlaceCard(Card current) Deals with UI updating when placing a card. Reccomend you call handleCard() instead to place cards!
-nextPlayer() - Rotates to next player
-updatePlayerUI() - Updates hands UI, creates card buttons, other UI elements
-showOrHide() - Determines when to show 'SHOW' button, and when to show 'HIDE' button
-drawFromDeck(int n) - Draws n number of cards and adds them to hand, removes them from the deck
-displayRanking() - Deals with UI of pause screen rankings
-resumeGame() - unfreezes rotations when coming from pause screen/Wild card screen
-colorButtonAction(string color) - Makes the current wild card set to decided color
-XXXButtonActionPerformed() - buttons that do stuff when clicked
-*/
 
 public class GameScreen extends javax.swing.JFrame {
 
@@ -58,11 +35,19 @@ public class GameScreen extends javax.swing.JFrame {
             current = d.AddandRedraw(current);
         this.controller.addToPile(current);
         this.refreshCurrentCard();
-        this.refreshPlayerUI();
+        this.refreshUI();
         this.showOrHideElements();
         this.controlLoop();
     }    
+    
     public void controlLoop(){
+        /* Main Game loop:
+        Creates Thread to aid in pauses for turns
+        Doesnt do rotations while game is paused. 
+        Performs NPC turn actions
+        Waits in a loop while the player's turn has not ended.
+        Once the player's turn has ended, refresh the GUI and rotate players
+        */
         Thread thread = new Thread(new Runnable(){
             public void run(){
                 while(true){
@@ -70,10 +55,8 @@ public class GameScreen extends javax.swing.JFrame {
                         GameScreen.this.pauseGame();
                     if(GameScreen.this.controller.getActivePlayer().isNPC()){
                         int draw = GameScreen.this.controller.npcAction();
-                        if(draw > 0){
-                            GameScreen.this.drawFromDeck(draw);
-                            GameScreen.this.controller.setTurn(true);
-                        }
+                        GameScreen.this.drawFromDeck(draw);
+                        GameScreen.this.controller.setTurn(true);
                         try {
                             Thread.sleep(1500);
                         } catch (InterruptedException ex) {
@@ -82,7 +65,7 @@ public class GameScreen extends javax.swing.JFrame {
                     }
                     while(!GameScreen.this.controller.isTurnEnded()){
                         try {
-                            Thread.sleep(0);
+                            Thread.sleep(0); //avoids some unusual issues
                         } catch (InterruptedException ex) {
                             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -93,7 +76,7 @@ public class GameScreen extends javax.swing.JFrame {
                         SwingUtilities.invokeAndWait(new Runnable(){
                             public void run(){
                                 GameScreen.this.showOrHideElements();
-                                GameScreen.this.refreshPlayerUI();
+                                GameScreen.this.refreshUI();
                             }
                         });
                     } catch (InterruptedException ex) {
@@ -555,7 +538,6 @@ public class GameScreen extends javax.swing.JFrame {
         m.setVisible(true);
         dispose();
     }
-
     private void displayColorSelect(){
         // Hide everything to show the color selection overlay
         // Need to hide hands since they can show through bgCover with mouse hover
@@ -580,7 +562,7 @@ public class GameScreen extends javax.swing.JFrame {
         }
     }
     private void refreshCurrentCard(){
-        // Placing card onto pile
+        // Refresh GUI view of the top playing card
         currentCard.removeAll(); // Need to do this to place new button
         Card current = this.controller.getTopCard();
         current.setButton(new JButton(new ImageIcon(this.getClass().getResource(current.getImage()))));
@@ -592,6 +574,8 @@ public class GameScreen extends javax.swing.JFrame {
         this.refreshCardLabel();
     }   
     private void refreshNotification(){
+        // Update the notification text that displays what just happened
+        // Don't show the notification if there's no text to be displayed
         if(!this.controller.getNotification().isEmpty()){
             notifyLabel.setText(this.controller.getNotification());
             notifyLabel.setVisible(true);
@@ -602,35 +586,15 @@ public class GameScreen extends javax.swing.JFrame {
     }
 
     private void putCard(Card current, List<Card> hand){
+        // For the user, not NPCs:
+        //  displays color selection screen if the user tries to play a wild
         this.controller.handleCard(current, hand);
         if(current.getColor().equals("wild") && !this.controller.getActivePlayer().hasPlayed()){
             this.displayColorSelect();
             this.controller.getActivePlayer().setPlayed(true);
         }
     }
-    private void refreshPlayerUI(){
-        // For updating various UI elements
-        this.refreshBgArrow();
-        this.refreshNotification();
-        //Turn Button:
-        if(!this.controller.getActivePlayer().isNPC()){
-            // If not NPC
-            // If has played card vs hasnt enable turn button
-            if(this.controller.getActivePlayer().hasPlayed() || !deckButton.isVisible())
-                turnButton.setEnabled(true);
-            else
-                turnButton.setEnabled(false);
-        }
-        else{ // TEMPORARY!! - IF NPC, HAVE TURN BUTTON ENABLED
-            turnButton.setEnabled(false);
-        }
-        // UNO Button - Enabled when active player has 1 card
-        if((this.controller.getActivePlayer().hasPlayed() || !deckButton.isVisible()) && this.controller.getActivePlayer().getHand().size()==1){
-            unoButton.setEnabled(true);
-        }
-        else{
-            unoButton.setEnabled(false);
-        }
+    private void refreshPlayerHands(){
         // For updating the Hand UI and player names
         JLabel[] names = new JLabel[]{p1name,p2name,p3name,p4name}; //hand and names must be same size
         JPanel[] containers = new JPanel[]{p1handcontainer,p2handcontainer,p3handcontainer,p4handcontainer};
@@ -668,7 +632,7 @@ public class GameScreen extends javax.swing.JFrame {
                     public void actionPerformed(ActionEvent e) {
                         System.out.println(phand.get(current));
                         putCard(phand.get(current),phand);
-                        refreshPlayerUI();
+                        refreshUI();
                     }
                 });
                 containers[i].add(b);
@@ -676,11 +640,41 @@ public class GameScreen extends javax.swing.JFrame {
             containers[i].revalidate();
             containers[i].repaint();
         }
+    }
+    private void refreshButtonStatus(){
+        // Update enabled status of UNO and TURN buttons
+        //Turn Button:
+        if(!this.controller.getActivePlayer().isNPC()){
+            // If not NPC
+            // If has played card vs hasnt enable turn button
+            if(this.controller.getActivePlayer().hasPlayed() || !deckButton.isVisible())
+                turnButton.setEnabled(true);
+            else
+                turnButton.setEnabled(false);
+        }
+        else{
+            turnButton.setEnabled(false);
+        }
+        // UNO Button - Enabled when active player has 1 card
+        if((this.controller.getActivePlayer().hasPlayed() || !deckButton.isVisible()) && this.controller.getActivePlayer().getHand().size()==1){
+            unoButton.setEnabled(true);
+        }
+        else{
+            unoButton.setEnabled(false);
+        }
+    }
+    private void refreshUI(){
+        // For updating various UI elements
+        this.refreshBgArrow();
+        this.refreshNotification();
+        this.refreshButtonStatus();
+        this.refreshPlayerHands();
         this.refreshCurrentCard();
         this.refreshCardLabel();
     }
     private void showOrHideElements(){
         // Controlling when active hand is visible/hidden + show/hide buttons
+        // Doesn't use SHOW and HIDE buttons when there is a single human player
         if(((Player)(this.controller.getPlayers().get(0))).isNPC()){
             p1hand.setVisible(false); 
             hideButton.setEnabled(false);
@@ -717,7 +711,6 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_hideButtonActionPerformed
 
     private void unoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unoButtonActionPerformed
-
         this.controller.getActivePlayer().setUNO(true);
         this.controller.nextPlayer(); // Ends turn
     }//GEN-LAST:event_unoButtonActionPerformed
@@ -736,25 +729,18 @@ public class GameScreen extends javax.swing.JFrame {
         }
         if(!this.controller.getActivePlayer().isNPC())
             this.turnButton.setEnabled(true);
-        this.refreshPlayerUI();
     }
     private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
         // Draw a new card
-        this.controller.getActivePlayer().setPlayed(true);
         deckButton.setEnabled(false); // Disable deck button since it's been used once
         drawFromDeck(1);
+        this.controller.getActivePlayer().setPlayed(true);
+        this.refreshUI(); // Refresh Turn button to make it realize if a card was auto-played
     }//GEN-LAST:event_deckButtonActionPerformed
 
     private void turnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_turnButtonActionPerformed
         // For ending turns and switching players
         this.controller.getActivePlayer().setPlayed(false);
-        //List<Player> npcs = this.controller.getActiveNPCs();
-        // If player forgets to click uno and instead clicks end turn, they have to draw 2,
-        // LOOKING INTO ALTERNATIVE OPTIONS here - maybe should be by chance based on difficulty
-        if(this.controller.getActivePlayer().getHand().size() == 1 &&
-                !this.controller.getActivePlayer().isNPC()){
-            this.drawFromDeck(2);
-        }
         this.controller.nextPlayer();
     }//GEN-LAST:event_turnButtonActionPerformed
 
@@ -763,9 +749,8 @@ public class GameScreen extends javax.swing.JFrame {
         showButton.setVisible(false);
         hideButton.setEnabled(true);
     }//GEN-LAST:event_showButtonActionPerformed
-
     private void displayRanking(){
-        // Basically a card count.
+        // Card count + winning screen
         JLabel[] labels = new JLabel[]{rank1,rank2,rank3,rank4};
         JLabel[] labelnames = new JLabel[]{rank1name,rank2name,rank3name,rank4name};
         List<Player> inactive = this.controller.getInactivePlayers();
@@ -853,7 +838,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.refreshCardLabel(); // Update label to reflect new color
     }
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
-        // Canceling a wild card
+        // Canceling a wild card - Re-adding it to the player's hand and undoing it being played
         this.resumeGame(); // Resume game
         p1hand.setVisible(true);
         this.controller.setNotification("");
@@ -868,8 +853,7 @@ public class GameScreen extends javax.swing.JFrame {
         }
         this.controller.getActivePlayer().getHand().add(top);
         this.controller.getPile().remove(this.controller.getPile().size()-1);
-        this.refreshPlayerUI();
-        this.refreshCurrentCard();
+        this.refreshUI();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     /**
@@ -903,7 +887,6 @@ public class GameScreen extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GameScreen().setVisible(true);
-                
             }
         });
     }
