@@ -195,6 +195,7 @@ public class Menu extends javax.swing.JFrame {
         gameSetup.getContentPane().add(player4Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 230, 110, -1));
 
         player1Name.setToolTipText("");
+        player1Name.setDisabledTextColor(new java.awt.Color(100, 100, 100));
         player1Name.setName(""); // NOI18N
         gameSetup.getContentPane().add(player1Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 140, 110, -1));
         player1Name.getAccessibleContext().setAccessibleName("");
