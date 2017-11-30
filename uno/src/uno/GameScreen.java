@@ -70,6 +70,7 @@ public class GameScreen extends javax.swing.JFrame {
                             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    GameScreen.this.refreshNotification(); // Flickering not an issue since it's only text being called from this thread
                     GameScreen.this.controller.setTurn(false);
                     GameScreen.this.controller.rotatePlayers();
                     try { //Refreshes GUI without flickering
@@ -665,7 +666,6 @@ public class GameScreen extends javax.swing.JFrame {
     private void refreshUI(){
         // For updating various UI elements
         this.refreshBgArrow();
-        this.refreshNotification();
         this.refreshButtonStatus();
         this.refreshPlayerHands();
         this.refreshCurrentCard();
@@ -847,17 +847,13 @@ public class GameScreen extends javax.swing.JFrame {
         deckButton.setEnabled(true);
         // Replace card on pile before wild card
         Card top = this.controller.getPile().get(this.controller.getPile().size()-1);
-        if(top.getValue().equals("d4")){
+        if(top.getValue().equals("d4"))
             this.controller.incrementDrawStack(-4);
-        }
         this.controller.getActivePlayer().getHand().add(top);
         this.controller.getPile().remove(this.controller.getPile().size()-1);
         this.refreshUI();
     }//GEN-LAST:event_buttonCancelActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
