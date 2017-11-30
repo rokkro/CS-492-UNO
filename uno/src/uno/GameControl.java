@@ -15,8 +15,8 @@ public class GameControl {
     private int rotateFactor = 1; // How many players are skipped/rotated
     private int drawStack = 0; // How many cards next player is required to draw (d2, d4)
     private boolean turnEnded = false;
-    private String notification = "";
-    private int notificationDecay = 0;
+    private String notification = ""; // White text notification that appears below current user
+    private int notificationDecay = 0; // Counts number of turns a notification is still being displayed
     
     public static String getNPCName(){ // Get a random name
         String[] names = {"Dolores","Arando","Bram","Cale","Dalkon","Daylen",
@@ -28,7 +28,6 @@ public class GameControl {
         String result = names[(int)(Math.random() * names.length)];
         return result;
     }
-
     public void incrementDrawStack(int num){
         this.drawStack += num;
     }
@@ -39,6 +38,7 @@ public class GameControl {
         return this.players;
     }
     public int getNumberOfHumans(){
+        // Returns int count of non-NPC players
         int count = 0;
         for(Player p:this.players){
             if(!p.isNPC())
@@ -99,6 +99,7 @@ public class GameControl {
             for(int i=0;i<7;i++){
                 p.addCard(this.deck.drawCard());
             }
+            this.activePlayer.sortHand();
         }
     }
     public void reverse(){
@@ -109,30 +110,36 @@ public class GameControl {
             this.clockwise = true;
     }
     public void drawCards(int num){
+        // Draw specified number of cards, adding them to the hand
+        // Will auto play when a single card is to be drawn (and isnt a wild card)
         for(int i=0;i<num;i++){
             if(this.deck.deckSize() == 0)
                 return;
             List<Card> hand = this.activePlayer.getHand();
             Card c = this.deck.drawCard();
-            if(this.isCardPlayable(c) && !c.getColor().equals("wild")){
+            if(this.isCardPlayable(c) && num == 1 && !c.getColor().equals("wild"))
                 this.handleCard(c, hand);
-            }
             else
                 hand.add(c);
         }
+        this.activePlayer.sortHand();
+    }
+    private void removeEmptyPlayers(){
+        // Loop through players and remove any without any cards left
+        for(int i=0;i<this.players.size();i++){
+            if(this.players.get(i).getHand().size()==0){
+                this.inactivePlayers.add(this.players.get(i));
+                this.players.remove(i);
+                this.paused = true;
+            }
+        }
     }
     public void rotatePlayers(){
-        // Rotate to the next player. Should be called from GameScreen's nextPlayer()
+        // Rotate to the next player.
         for(int j=0;j<this.rotateFactor;j++){
             this.getActivePlayer().setPlayed(false);
             this.getActivePlayer().setUNO(false);
-            for(int i=0;i<this.players.size();i++){
-                if(this.players.get(i).getHand().size()==0){
-                    this.inactivePlayers.add(this.players.get(i));
-                    this.players.remove(i);
-                    this.paused = true;
-                }
-            }
+            this.removeEmptyPlayers();
             if(this.players.size() == 0)
                 return;
             if(!this.clockwise){
@@ -147,6 +154,7 @@ public class GameControl {
                 this.players.remove(0);
                 this.activePlayer = this.players.get(0);
             }
+            // Drawing of cards (d2, d4)
             if(this.drawStack > 0){
                 this.drawCards(this.drawStack);
                 this.drawStack = 0;
@@ -154,13 +162,15 @@ public class GameControl {
             }
             this.notificationDecay+=1;
         }
+        // Clear notification if it exceeds the decay limit
         if(this.notificationDecay >= 5){
             this.setNotification("");
         }
         this.rotateFactor = 1;
     }
     public boolean NpcPlayByColor(List<Card> playable){
-        for(Card c: playable){ //Prefer eliminating same color before switching colors
+        // NPC play action - Prefer a card with the same color before switching to a different color
+        for(Card c: playable){
             if(c.getColor().equals(this.getTopCard().getColor()) && !c.getColor().equals("wild")){
                 System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
                 this.handleCard(c, this.getActivePlayer().getHand());
@@ -170,7 +180,8 @@ public class GameControl {
         return false;
     }
     public boolean NpcPlayByValue(List<Card> playable){
-        for(Card c: playable){ //Prefer eliminating same color before switching colors
+        // NPC play action - Prefer eliminating same color before switching colors
+        for(Card c: playable){ 
             if(c.getValue().equals(this.getTopCard().getValue()) && !c.getColor().equals("wild")){
                 System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
                 this.handleCard(c, this.getActivePlayer().getHand());
@@ -180,11 +191,12 @@ public class GameControl {
         return false;
     }
     public void NpcPlayFirst(List<Card> playable){
+        // NPC play action - normal mode - play the first playable card in the list
         System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); 
         this.handleCard(playable.get(0), this.getActivePlayer().getHand());
     }
     public int npcAction(){      
-        //Actual Logic
+        // NPC card playing decision logic
         List<Card> playable = this.getPlayableCards();
         if(playable.size() == 0){
             System.out.println(this.getActivePlayer().getName() + " is drawing!");
@@ -215,10 +227,11 @@ public class GameControl {
     }
         
     private boolean choice() {
+        // 50/50 chance
         return Math.random() < 0.5;
     }
-    
     public void nextPlayer(){
+        // Deals with the UNO + Turn abilities on the logic side so GUI can rotate players
         Player current = this.getActivePlayer();
         if(current.getHand().size() == 1 && !current.hasDeclaredUNO()){
             if(this.choice()){
@@ -229,6 +242,7 @@ public class GameControl {
         this.setTurn(true);
     }
     public Player getNextPlayer(){
+        // Returns player who will play next
         if(this.clockwise){
             if(this.players.size() > 1)
                 return (Player)this.players.get(1);
@@ -251,6 +265,7 @@ public class GameControl {
         this.activePlayer = this.players.get(0);
     }
     private boolean isCardPlayable(Card c){
+        // Returns true if Card c can be played
         if(c.getColor().equals(this.getTopCard().getColor()))
             return true;
         else if(c.getValue().equals(this.getTopCard().getValue()))
@@ -260,6 +275,7 @@ public class GameControl {
         return false;
     }
     public List<Card> getPlayableCards(){
+        // Gets a list of playable cards from the hand
         List<Card> playable = new ArrayList();
         for(int i = 0; i < this.getActivePlayer().getHand().size();i++){
             Card current = (Card)this.activePlayer.getHand().get(i);

@@ -2,6 +2,8 @@
 package uno;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Player {
@@ -23,6 +25,15 @@ public class Player {
     }
     public boolean hasDeclaredUNO(){
         return this.declaredUNO;
+    }
+
+    public void sortHand(){
+        Collections.sort(this.hand, new Comparator<Card>() {
+            @Override
+            public int compare(final Card c1, final Card c2) {
+                return c1.getColor().compareTo(c2.getColor());
+            }
+        });
     }
     public void setUNO(boolean state){
         this.declaredUNO = state;
