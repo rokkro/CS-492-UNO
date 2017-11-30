@@ -70,12 +70,12 @@ public class GameScreen extends javax.swing.JFrame {
                             Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                    GameScreen.this.refreshNotification(); // Flickering not an issue since it's only text being called from this thread
                     GameScreen.this.controller.setTurn(false);
                     GameScreen.this.controller.rotatePlayers();
                     try { //Refreshes GUI without flickering
                         SwingUtilities.invokeAndWait(new Runnable(){
                             public void run(){
+                                GameScreen.this.refreshNotification();
                                 GameScreen.this.showOrHideElements();
                                 GameScreen.this.refreshUI();
                             }
