@@ -24,7 +24,7 @@ public class GameControl {
             "Hagar","Jeras","Krynt","Lavant","Leyten","Madian","Malfier","Markus",
             "Meklan","Namen","Navaren","Nerle","Nilus","Ningyan","Norris","Quentin",
             "Semil","Sevenson","Steveren","Talfen","Tamond","Taran","Tavon","Tegan",
-            "Vanan","Vincent"};
+            "Vanan","Vincent", "Taimi", "Braham", "Kasmeer", "Marjory", "Scruffy", "Canach"};
         String result = names[(int)(Math.random() * names.length)];
         return result;
     }
