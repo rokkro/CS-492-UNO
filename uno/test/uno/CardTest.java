@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package uno;
 
 import org.junit.AfterClass;
@@ -10,10 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author Darren
- */
+
 public class CardTest {
     
     public CardTest() {
@@ -28,6 +20,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Darren.
      * Test of isSpecial method, of class Card.
      */
     @Test
@@ -40,6 +33,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Darren
      * Test of getValue method, of class Card.
      */
     @Test
@@ -52,6 +46,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Darren
      * Test of getColor method, of class Card.
      */
     @Test
@@ -64,6 +59,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Darren
      * Test of setColor method, of class Card.
      */
     @Test
@@ -76,6 +72,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Luke
      * Test get and set of button methods
     */
     @Test
@@ -88,6 +85,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Luke
      * Test of getImage method, of class Card.
      */
     @Test
@@ -100,6 +98,7 @@ public class CardTest {
     }
 
     /**
+     * Case by Luke
      * Test of toString method, of class Card.
      */
     @Test

@@ -40,7 +40,7 @@ public class GameScreen extends javax.swing.JFrame {
         this.controlLoop();
     }    
     
-    public void controlLoop(){
+    private void controlLoop(){
         /* Main Game loop:
         Creates Thread to aid in pauses for turns
         Doesnt do rotations while game is paused. 
@@ -54,8 +54,9 @@ public class GameScreen extends javax.swing.JFrame {
                     while(GameScreen.this.controller.isPaused())
                         GameScreen.this.pauseGame();
                     if(GameScreen.this.controller.getActivePlayer().isNPC()){
-                        int draw = GameScreen.this.controller.npcAction();
-                        GameScreen.this.drawFromDeck(draw);
+                        boolean draw = GameScreen.this.controller.npcAction();
+                        if(draw)
+                            GameScreen.this.drawFromDeck(1);
                         GameScreen.this.controller.setTurn(true);
                         try {
                             Thread.sleep(1500);
@@ -777,7 +778,7 @@ public class GameScreen extends javax.swing.JFrame {
     }
     private void pauseGame(){
         // Pause the game rotation and show the pause screen + rankings
-        this.controller.setGameState(true);
+        this.controller.setPaused(true);
         bgCover.setVisible(true);
         currentCard.setVisible(false);
         p1hand.setVisible(false);
@@ -793,7 +794,7 @@ public class GameScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_pauseButtonActionPerformed
 
     private void resumeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resumeButtonActionPerformed
-        this.controller.setGameState(false);
+        this.controller.setPaused(false);
         this.resumeGame();
         pauseScreen.setVisible(false);
         currentCard.setVisible(true);

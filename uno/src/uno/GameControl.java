@@ -31,7 +31,7 @@ public class GameControl {
     public void incrementDrawStack(int num){
         this.drawStack += num;
     }
-    public void setGameState(boolean state){
+    public void setPaused(boolean state){
         this.paused = state;
     }
     public List<Player> getPlayers(){
@@ -64,9 +64,7 @@ public class GameControl {
     public List<Card> getPile(){
         return this.pile;
     }
-    public void setRotationFactor(int f){
-        this.rotateFactor = f;
-    }
+
     public void addToPile(Card c){
         this.pile.add(c);
     }
@@ -195,13 +193,13 @@ public class GameControl {
         System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); 
         this.handleCard(playable.get(0), this.getActivePlayer().getHand());
     }
-    public int npcAction(){      
+    public boolean npcAction(){      
         // NPC card playing decision logic
         List<Card> playable = this.getPlayableCards();
         if(playable.size() == 0){
             System.out.println(this.getActivePlayer().getName() + " is drawing!");
             this.getActivePlayer().setPlayed(true);
-            return 1;
+            return true; // Can draw a card
         }
         else{
             if(this.difficulty == 0){
@@ -223,7 +221,7 @@ public class GameControl {
             }
         }
         this.nextPlayer();
-        return 0;
+        return false; // Cannot draw a card
     }
         
     private boolean choice() {
@@ -302,7 +300,7 @@ public class GameControl {
                 this.setNotification("Direction reversed.");
             }
             else if(current.getValue().equals("skip")){
-                this.setRotationFactor(2);
+                this.rotateFactor = 2;
                 this.setNotification(this.getNextPlayer().getName() + " was skipped.");
             }
             else if(current.getValue().equals("d2")){ // Draw two
