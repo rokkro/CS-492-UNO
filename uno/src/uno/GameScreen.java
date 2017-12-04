@@ -631,9 +631,10 @@ public class GameScreen extends javax.swing.JFrame {
                 b.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println(phand.get(current));
+                        //System.out.println(phand.get(current));
                         putCard(phand.get(current),phand);
                         refreshUI();
+                        showOrHideElements();
                     }
                 });
                 containers[i].add(b);
@@ -688,17 +689,16 @@ public class GameScreen extends javax.swing.JFrame {
                 hideButton.setEnabled(true);
                 showButton.setVisible(false);
             }
-            else if(this.controller.getNumberOfHumans() == 1){
-                p1hand.setVisible(true);
-                deckButton.setEnabled(true);
-                hideButton.setEnabled(false);
-                showButton.setVisible(false);
-            }
             else{
-                p1hand.setVisible(false);
                 deckButton.setEnabled(true);
+                p1hand.setVisible(false);
                 hideButton.setEnabled(false);
                 showButton.setVisible(true);
+            }
+            if(this.controller.getNumberOfHumans() == 1){
+                p1hand.setVisible(true);
+                hideButton.setEnabled(false);
+                showButton.setVisible(false);
             }
         }
     }
@@ -727,8 +727,8 @@ public class GameScreen extends javax.swing.JFrame {
         if(this.controller.getDeck().deckSize() == 0){
             deckButton.setVisible(false);
         }
-        if(!this.controller.getActivePlayer().isNPC())
-            this.turnButton.setEnabled(true);
+ /*       if(!this.controller.getActivePlayer().isNPC())
+            this.turnButton.setEnabled(true);*/
     }
     private void deckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deckButtonActionPerformed
         // Draw a new card
@@ -766,14 +766,14 @@ public class GameScreen extends javax.swing.JFrame {
         tmp.addAll(inactive);
         tmp.addAll(active);
         for(int i=0;i<labels.length;i++){
-                Player p = tmp.get(i);
-                String NPC = p.isNPC() ? "(NPC)" : "";
-                labels[i].setText(p.getName() + " " + NPC);
-                int handSize = p.getHand().size();
-                if(handSize > 0)
-                    labelnames[i].setText(Integer.toString(handSize));
-                else
-                    labelnames[i].setText("Winner #" + Integer.toString(i+1));
+            Player p = tmp.get(i);
+            String NPC = p.isNPC() ? "(NPC)" : "";
+            labels[i].setText(p.getName() + " " + NPC);
+            int handSize = p.getHand().size();
+            if(handSize > 0)
+                labelnames[i].setText(Integer.toString(handSize));
+            else
+                labelnames[i].setText("Winner #" + Integer.toString(i+1));
         }
     }
     private void pauseGame(){

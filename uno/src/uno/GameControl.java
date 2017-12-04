@@ -170,7 +170,7 @@ public class GameControl {
         // NPC play action - Prefer a card with the same color before switching to a different color
         for(Card c: playable){
             if(c.getColor().equals(this.getTopCard().getColor()) && !c.getColor().equals("wild")){
-                System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
+                //System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
                 this.handleCard(c, this.getActivePlayer().getHand());
                 return true;
             }
@@ -181,7 +181,7 @@ public class GameControl {
         // NPC play action - Prefer eliminating same color before switching colors
         for(Card c: playable){ 
             if(c.getValue().equals(this.getTopCard().getValue()) && !c.getColor().equals("wild")){
-                System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
+                //System.out.println(this.getActivePlayer().getName() + " is playing: " + c); 
                 this.handleCard(c, this.getActivePlayer().getHand());
                 return true;
             }
@@ -190,14 +190,14 @@ public class GameControl {
     }
     public void NpcPlayFirst(List<Card> playable){
         // NPC play action - normal mode - play the first playable card in the list
-        System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); 
+        //System.out.println(this.getActivePlayer().getName() + " is playing: " + playable.get(0)); 
         this.handleCard(playable.get(0), this.getActivePlayer().getHand());
     }
     public boolean npcAction(){      
         // NPC card playing decision logic
         List<Card> playable = this.getPlayableCards();
         if(playable.size() == 0){
-            System.out.println(this.getActivePlayer().getName() + " is drawing!");
+            //System.out.println(this.getActivePlayer().getName() + " is drawing!");
             this.getActivePlayer().setPlayed(true);
             return true; // Can draw a card
         }

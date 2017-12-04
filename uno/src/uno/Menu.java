@@ -121,6 +121,7 @@ public class Menu extends javax.swing.JFrame {
         gameSetup.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         warningLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        warningLabel.setForeground(new java.awt.Color(254, 254, 254));
         warningLabel.setText("Please make sure all fields are filled out.");
         warningLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 0, 0)));
         warningLabel.setFocusTraversalPolicyProvider(true);
